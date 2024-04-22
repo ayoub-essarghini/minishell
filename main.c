@@ -29,22 +29,85 @@ char *ft_strjoin(char const *s1, char const *s2)
     return (new_str);
 }
 
-int excute_cmd(char *cmd[])
+int excute_cmd(char *cmd)
 {
-    printf("%s\n", cmd[1]);
-    if (strcmp(cmd[0], "ls") == 0)
+
+    if (strcmp(cmd, "ls") == 0)
     {
-        if (execvp(cmd[0], cmd) == -1)
+        // cmd[1] = NULL;
+        char *args[] = {cmd, NULL};
+        if (execve("/bin/ls", args, NULL) == -1)
         {
             printf("execution failed ");
             return (-1);
         }
     }
+    else if (strcmp(cmd, "ls -la") == 0)
+    {
+        // cmd[1] = NULL;
+        char *args[] = {cmd, "-la", NULL};
+        if (execve("/bin/ls", args, NULL) == -1)
+        {
+            printf("execution failed ");
+            return (-1);
+        }
+    }
+    else if (strncmp(cmd, "echo", 4) == 0)
+    {
+        if (strlen(cmd) > 4)
+        {
+
+            if (*(cmd + 4) == ' ' && *(cmd + 5) == '-' && *(cmd + 6) == 'n' && *(cmd + 7) != '\0')
+            {
+                // printf("done");
+                char *c = cmd + 8;
+                printf("%s", c);
+            }  else
+            {
+            char *c = cmd + 5;
+            printf("%s\n", c);
+            }
+        }
+        else
+        {
+            printf("\n");
+        }
+      
+    }
+    else if (strncmp(cmd,"cd",2) == 0)
+    {
+        if (*(cmd+2) == '\0')
+        {
+            const char *home = getenv("HOME");
+            if (chdir(home) == -1)
+            {
+                printf("No such file or directory !");
+            }
+            char cwd[1045];
+
+            if (getcwd(cwd,sizeof(cwd)) != NULL)
+            {
+                printf("%s\n",cwd);
+            }
+        }
+        else
+        {
+            if (chdir(cmd+3) == -1)
+            {
+                printf("No such file or directory !");
+            }
+             char cwd[1045];
+            if (getcwd(cwd,sizeof(cwd)) != NULL)
+            {
+                printf("%s\n",cwd);
+            }
+        }
+    }
+
     return (0);
 }
 int main()
 {
-    t_infos *infos = (t_infos *)malloc(sizeof(t_infos));
 
     while (1)
     {
@@ -66,17 +129,6 @@ int main()
             break;
         }
 
-        char *cmd = strtok(input, " ");
-        int i = 0;
-        while (cmd != NULL)
-        {
-            infos->cmd[i] = (char *)malloc(sizeof(char) * (strlen(cmd) + 1));
-            strcpy(infos->cmd[i], cmd);
-            cmd = strtok(NULL, " ");
-            i++;
-        }
-        infos->cmd[i] = NULL;
-
         if (strcmp(input, "exit") == 0)
         {
             printf("exit..\n");
@@ -92,7 +144,7 @@ int main()
         }
         else if (pid == 0)
         {
-            excute_cmd(infos->cmd);
+            excute_cmd(input);
         }
         else
         {
