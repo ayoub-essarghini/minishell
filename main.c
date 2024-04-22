@@ -29,6 +29,15 @@ char *ft_strjoin(char const *s1, char const *s2)
     return (new_str);
 }
 
+void execute_at_root()
+{
+    char *root = getenv("HOME");
+    if (chdir(root) == -1)
+    {
+        perror("root file missed !");
+        exit(EXIT_FAILURE);
+    }
+}
 int excute_cmd(char *cmd)
 {
 
@@ -83,12 +92,12 @@ int excute_cmd(char *cmd)
             {
                 printf("No such file or directory !");
             }
-            char cwd[1045];
+            // char cwd[1045];
 
-            if (getcwd(cwd,sizeof(cwd)) != NULL)
-            {
-                printf("%s\n",cwd);
-            }
+            // if (getcwd(cwd,sizeof(cwd)) != NULL)
+            // {
+            //     printf("%s\n",cwd);
+            // }
         }
         else
         {
@@ -96,21 +105,45 @@ int excute_cmd(char *cmd)
             {
                 printf("No such file or directory !");
             }
-             char cwd[1045];
-            if (getcwd(cwd,sizeof(cwd)) != NULL)
-            {
-                printf("%s\n",cwd);
-            }
+            //  char cwd[1045];
+            // if (getcwd(cwd,sizeof(cwd)) != NULL)
+            // {
+            //     printf("%s\n",cwd);
+            // }
         }
+    }
+    else if (strncmp(cmd,"export",6) == 0)
+    {
+        const char *token = "test";
+        const char *value = "22";
+     if (setenv(token, value, 1) != 0) {
+    perror("setenv error");
+} else {
+    printf("Environment variable %s set to %s\n", token, value);
+}
     }
 
     return (0);
 }
+
+void handle_signal(int sig)
+{
+    if (sig == SIGINT)
+    {
+        printf("^C");
+        rl_clear_signals();
+       
+    }
+}
 int main()
 {
 
+    execute_at_root();
+
     while (1)
     {
+
+        // signal(SIGINT,handle_signal);
         char cwd[1045];
         if (getcwd(cwd, sizeof(cwd)) == NULL)
         {
@@ -118,9 +151,21 @@ int main()
             exit(EXIT_FAILURE);
         }
 
-        char *name = strrchr(cwd, '/');
+        char *name = strrchr(cwd, '/');                    
+
+        char *root = getenv("HOME");
+        root = strrchr(root,'/');
+      
+         if (strcmp(name+1,root+1) == 0)
+        {
+       
+            name =ft_strjoin("","\033[33m ➜\033[0m ");
+        }
+        else
+        {
         name = ft_strjoin(" \033[33m", name + 1);
         name = ft_strjoin(name, "\33[0m\033[33m ➜\033[0m ");
+        }
         char *input = readline(name);
 
         if (!input)
@@ -131,8 +176,8 @@ int main()
 
         if (strcmp(input, "exit") == 0)
         {
-            printf("exit..\n");
-            break;
+            printf("exit\n");
+            exit(EXIT_SUCCESS);
         }
 
         pid_t pid = fork();
@@ -151,4 +196,5 @@ int main()
             wait(NULL);
         }
     }
+    return (0);
 }
