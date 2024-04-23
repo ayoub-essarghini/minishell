@@ -7,39 +7,25 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 
-#define COLOR_RED     "\033[31m"
-#define COLOR_GREEN   "\033[1;34m"
-#define COLOR_RESET   "\033[0m"
+#define COLOR_RED "\033[31m"
+#define COLOR_GREEN "\033[1;34m"
+#define COLOR_RESET "\033[0m"
 
+typedef struct s_list
+{
+    char *key;
+    char operator;
+    struct s_list *next;
+} t_list;
 
-typedef struct s_infos{
+typedef struct s_infos
+{
 
     char *cwd;
     char *cmd[];
 
-    
-
-}   t_infos;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} t_infos;
 
 #endif

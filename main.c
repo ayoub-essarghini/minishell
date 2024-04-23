@@ -1,5 +1,62 @@
 #include "minishell.h"
 
+t_list *ft_lstlast(t_list *lst)
+{
+    if (!lst)
+        return (NULL);
+    while (lst->next != NULL)
+    {
+        lst = lst->next;
+    }
+    return (lst);
+}
+
+int ft_lstsize(t_list *lst)
+{
+    t_list *temp;
+    int i;
+
+    temp = lst;
+    i = 0;
+    while (temp != NULL)
+    {
+        temp = temp->next;
+        i++;
+    }
+    return (i);
+}
+
+void ft_lstadd_back(t_list **lst, t_list *new)
+{
+    t_list *add;
+
+    if (new)
+    {
+        if (!*lst)
+        {
+            *lst = new;
+            new->next = NULL;
+            return;
+        }
+        add = ft_lstlast(*lst);
+        add->next = new;
+        new->operator= 'c';
+        new->next = NULL;
+    }
+}
+
+t_list *ft_lstnew(char *key)
+{
+    t_list *newnode;
+
+    newnode = malloc(sizeof(t_list));
+    if (!newnode)
+        return (NULL);
+    newnode->key = strdup(key);
+    newnode->next = NULL;
+    newnode->operator= 'c';
+    return (newnode);
+}
 char *ft_strjoin(char const *s1, char const *s2)
 
 {
@@ -29,6 +86,23 @@ char *ft_strjoin(char const *s1, char const *s2)
     return (new_str);
 }
 
+void creat_nodes(t_list **head, char *key)
+{
+    t_list *new;
+
+    if (*head == NULL)
+    {
+        *head = ft_lstnew(key);
+    }
+    else
+    {
+        new = malloc(sizeof(t_list));
+        new->key = strdup(key);
+        new->operator= 'c';
+        new->next = NULL;
+        ft_lstadd_back(head, new);
+    }
+}
 void execute_at_root()
 {
     char *root = getenv("HOME");
@@ -38,7 +112,38 @@ void execute_at_root()
         exit(EXIT_FAILURE);
     }
 }
-int excute_cmd(char *cmd)
+
+char *get_key(char *str)
+{
+    int len = 0;
+    while (str[len] != '=')
+        len++;
+    char *new_str = (char *)malloc(sizeof(char) * len);
+
+    strncpy(new_str, str, len);
+
+    return new_str;
+}
+
+int unset_env(t_list *envs, char *key)
+{
+    t_list *tmp;
+
+    tmp = envs;
+    while (tmp)
+    {
+        char *k = get_key(tmp->key);
+        if (strcmp(k, key) == 0)
+        {
+            free(tmp->key);
+            free(tmp);
+            return 0;
+        }
+        tmp = tmp->next;
+    }
+    return -1;
+}
+int excute_cmd(char *cmd, t_list *envs)
 {
 
     if (strcmp(cmd, "ls") == 0)
@@ -71,26 +176,26 @@ int excute_cmd(char *cmd)
                 // printf("done");
                 char *c = cmd + 8;
                 printf("%s", c);
-            }  else
+            }
+            else
             {
-            char *c = cmd + 5;
-            printf("%s\n", c);
+                char *c = cmd + 5;
+                printf("%s\n", c);
             }
         }
         else
         {
             printf("\n");
         }
-      
     }
-    else if (strncmp(cmd,"cd",2) == 0)
+    else if (strncmp(cmd, "cd", 2) == 0)
     {
-        if (*(cmd+2) == '\0')
+        if (*(cmd + 2) == '\0')
         {
             const char *home = getenv("HOME");
             if (chdir(home) == -1)
             {
-                printf("No such file or directory !");
+                printf("Permission denied !");
             }
             // char cwd[1045];
 
@@ -101,9 +206,9 @@ int excute_cmd(char *cmd)
         }
         else
         {
-            if (chdir(cmd+3) == -1)
+            if (chdir(cmd + 3) == -1)
             {
-                printf("No such file or directory !");
+                printf("Permission denied !");
             }
             //  char cwd[1045];
             // if (getcwd(cwd,sizeof(cwd)) != NULL)
@@ -112,15 +217,53 @@ int excute_cmd(char *cmd)
             // }
         }
     }
-    else if (strncmp(cmd,"export",6) == 0)
+    else if (strcmp(cmd, "env") == 0)
     {
-        const char *token = "test";
-        const char *value = "22";
-     if (setenv(token, value, 1) != 0) {
-    perror("setenv error");
-} else {
-    printf("Environment variable %s set to %s\n", token, value);
-}
+
+        while (envs != NULL)
+        {
+            printf("%s\n", envs->key);
+            envs = envs->next;
+        }
+    }
+    else if (strncmp(cmd, "export", 6) == 0)
+    {
+        if (strcmp(cmd + 7, "\0") == 0)
+        {
+            while (envs != NULL)
+            {
+                printf("%s\n", envs->key);
+                envs = envs->next;
+            }
+        }
+        char *ocu;
+        if ((ocu = strchr(cmd, '=')))
+        {
+            if (*(ocu + 1) != '\0')
+            {
+                creat_nodes(&envs, cmd + 7);
+            }
+        }
+    }
+    if (strncmp(cmd, "unset", 5) == 0)
+    {
+        if (*(cmd + 5) == '\0')
+        {
+            printf("unset : Not enough arguments!\n");
+        }
+        else
+        {
+            if (*(cmd + 6) != '\0')
+            {
+
+                // printf("%s", cmd + 6);
+
+                if (unset_env(envs, cmd + 6) == 7)
+                {
+                    printf("unset %s successfully !", cmd + 6);
+                }
+            }
+        }
     }
 
     return (0);
@@ -132,17 +275,42 @@ void handle_signal(int sig)
     {
         printf("^C");
         rl_clear_signals();
-       
     }
 }
-int main()
+int main(int argc, char *argv[], char *env[])
 {
+
+    (void)argc;
+    (void)argv;
+    // (void)env;
+
+    t_list *envs;
+
+    envs = NULL;
+
+    int i = 0;
+
+    while (env[i] != NULL)
+    {
+        creat_nodes(&envs, env[i]);
+        i++;
+    }
+
+    // printf("%s\n",env[0]);
 
     execute_at_root();
 
+    if (access("./test.txt", F_OK) == -1)
+    {
+        printf("permission denied !\n");
+    }
+    else
+    {
+        printf("access authorized ");
+    }
+
     while (1)
     {
-
         // signal(SIGINT,handle_signal);
         char cwd[1045];
         if (getcwd(cwd, sizeof(cwd)) == NULL)
@@ -151,30 +319,30 @@ int main()
             exit(EXIT_FAILURE);
         }
 
-        char *name = strrchr(cwd, '/');                    
+        char *name = strrchr(cwd, '/');
 
         char *root = getenv("HOME");
-        root = strrchr(root,'/');
-      
-         if (strcmp(name+1,root+1) == 0)
+        root = strrchr(root, '/');
+
+        if (strcmp(name + 1, root + 1) == 0)
         {
-       
-            name =ft_strjoin("","\033[33m ➜\033[0m ");
+
+            name = ft_strjoin("", "\033[33m ➜\033[0m ");
         }
         else
         {
-        name = ft_strjoin(" \033[33m", name + 1);
-        name = ft_strjoin(name, "\33[0m\033[33m ➜\033[0m ");
+            name = ft_strjoin(" \033[33m", name + 1);
+            name = ft_strjoin(name, "\33[0m\033[33m ➜\033[0m ");
         }
-        char *input = readline(name);
+        char *cmd = readline(name);
 
-        if (!input)
+        if (!cmd)
         {
             printf("\n");
             break;
         }
-
-        if (strcmp(input, "exit") == 0)
+        add_history(cmd);
+        if (strcmp(cmd, "exit") == 0)
         {
             printf("exit\n");
             exit(EXIT_SUCCESS);
@@ -189,7 +357,7 @@ int main()
         }
         else if (pid == 0)
         {
-            excute_cmd(input);
+            excute_cmd(cmd, envs);
         }
         else
         {
