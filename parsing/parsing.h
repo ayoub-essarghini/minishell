@@ -3,34 +3,62 @@
 
 #include <stdio.h>
 #include "./libft/libft.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdlib.h>
 #include <string.h>
+
+typedef enum s_state
+{
+    Single = 1,
+    Double = 2,
+    General = 0
+} state;
+
+typedef enum e_token
+{
+	WORD,
+	WHITE_SPACE,
+	OPTION,	
+	NEW_LINE,
+	QOUTE,
+	DOUBLE_QUOTE,
+	ESCAPE,
+	ENV,
+	PIPE_LINE,
+	REDIR_IN,
+	REDIR_OUT,
+	HERE_DOC,
+	DREDIR_OUT,
+} t_token;
 
 typedef struct s_list
 {
-    char *input;
-    char index;
-    struct s_list *prev;
+    char    *input;
+    state   status;
+    t_token token;
     struct s_list *next;
+    struct s_list *prev;
 }t_list;
 
+//  PARSING 
 
+int    check_line(char *str);
+void	get_line(t_list **tab, char *line);
+void    check_nodes(t_list *tab);
 
-typedef struct s_line
-{
-    char **elem; // store elements
-}
+// linked list
 
-// ---->>>>>>>> PARSING FUNCTIONS 
-void    store_map(char *line, t_list **list);
-/// //// /  / / / / / / / / / / / / /
-
-// --->>>>>>>>>>>>>>>> linked list
 t_list	*ft_lstlast(t_list *lst);
 int	    ft_lstsize(t_list *lst);
 void	ft_lstadd_back(t_list **lst, t_list *new);
-void	creat_nodes(t_list **head, char *input);
-t_list	*ft_lstnew(char *input);
+void	creat_nodes(t_list **head, char *input, int status);
+t_list	*ft_lstnew(char *input, int status);
 
-// // // // // // // // // // // // //
+// utils
+
+void    print_nodes(t_list *tab);
+void    ft_free(t_list *tab);
+void    ft_error(t_list *tab);
 
 #endif 

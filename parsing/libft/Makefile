@@ -52,6 +52,7 @@ SRCS =  ft_atoi.c \
 	ft_putchar_fd.c \
 	ft_strdup.c \
 	ft_strrchr.c \
+	ft_strcmp.c \
 
 OBJS = ${SRCS:.c=.o}
 NAME = libft.a
