@@ -1,6 +1,7 @@
 #ifndef PARSING_H
 #define PARSING_H
 
+#include "minishell.h"
 #include <stdio.h>
 #include "./parsing/libft/libft.h"
 #include <readline/readline.h>
@@ -47,6 +48,7 @@ int    check_line(char *str);
 void	get_line(t_list **tab, char *line);
 void    check_nodes(t_list *tab);
 void    check_first(t_list *tab);
+int exec_builtin(t_list *cmds);
 
 // linked list
 

@@ -1,6 +1,6 @@
-#include "minishell.h"
+#include "parsing.h"
 
-t_list *ft_lstlast(t_list *lst)
+t_envs *ft_lstlast2(t_envs *lst)
 {
     if (!lst)
         return (NULL);
@@ -11,9 +11,9 @@ t_list *ft_lstlast(t_list *lst)
     return (lst);
 }
 
-int ft_lstsize(t_list *lst)
+int ft_lstsize2(t_envs *lst)
 {
-    t_list *temp;
+    t_envs *temp;
     int i;
 
     temp = lst;
@@ -26,9 +26,9 @@ int ft_lstsize(t_list *lst)
     return (i);
 }
 
-void ft_lstadd_back(t_list **lst, t_list *new)
+void ft_lstadd_back2(t_envs **lst, t_envs *new)
 {
-    t_list *add;
+    t_envs *add;
 
     if (new)
     {
@@ -45,11 +45,11 @@ void ft_lstadd_back(t_list **lst, t_list *new)
     }
 }
 
-t_list *ft_lstnew(char *key)
+t_envs *ft_lstnew2(char *key)
 {
-    t_list *newnode;
+    t_envs *newnode;
 
-    newnode = malloc(sizeof(t_list));
+    newnode = malloc(sizeof(t_envs));
     if (!newnode)
         return (NULL);
     newnode->key = strdup(key);
@@ -86,21 +86,21 @@ char *ft_strjoin(char const *s1, char const *s2)
     return (new_str);
 }
 
-void creat_nodes(t_list **head, char *key)
+void creat_node(t_envs **head, char *key)
 {
-    t_list *new;
+    t_envs *new;
 
     if (*head == NULL)
     {
-        *head = ft_lstnew(key);
+        *head = ft_lstnew2(key);
     }
     else
     {
-        new = malloc(sizeof(t_list));
+        new = malloc(sizeof(t_envs));
         new->key = strdup(key);
         new->operator= 'c';
         new->next = NULL;
-        ft_lstadd_back(head, new);
+        ft_lstadd_back2(head, new);
     }
 }
 void execute_at_root()
@@ -125,9 +125,9 @@ char *get_key(char *str)
     return new_str;
 }
 
-int unset_env(t_list *envs, char *key)
+int unset_env(t_envs *envs, char *key)
 {
-    t_list *tmp;
+    t_envs *tmp;
 
     tmp = envs;
     while (tmp)
@@ -143,7 +143,7 @@ int unset_env(t_list *envs, char *key)
     }
     return -1;
 }
-int excute_cmd(char *cmd, t_list *envs)
+int excute_cmd(char *cmd, t_envs *envs)
 {
 
     if (strcmp(cmd, "ls") == 0)
@@ -241,7 +241,7 @@ int excute_cmd(char *cmd, t_list *envs)
         {
             if (*(ocu + 1) != '\0')
             {
-                creat_nodes(&envs, cmd + 7);
+                creat_node(&envs, cmd + 7);
             }
         }
     }
@@ -284,7 +284,7 @@ int main(int argc, char *argv[], char *env[])
     (void)argv;
     // (void)env;
 
-    t_list *envs;
+    t_envs *envs;
 
     envs = NULL;
 
@@ -292,7 +292,7 @@ int main(int argc, char *argv[], char *env[])
 
     while (env[i] != NULL)
     {
-        creat_nodes(&envs, env[i]);
+        creat_node(&envs, env[i]);
         i++;
     }
 

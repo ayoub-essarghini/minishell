@@ -65,14 +65,15 @@ void    check_first(t_list *tab)
         while(builtins[i])
         {
             if(ft_strcmp(tab->input, builtins[i]) == 0)
-            printf("excute builtins \n");
-            //excute_builtins()
-            else
-                printf("its a word but not a builtins\n");
+            // printf("excute builtins \n");
+            if (exec_builtin(tab)!= 0)
+            {
+                perror("exceve field");
+            }
+     
         
         i++;
         }
     }
-    else
-        printf("faux input check\n");
+   
 }
