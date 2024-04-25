@@ -53,3 +53,26 @@ void check_nodes(t_list *tab)
         tab = tab->next;
     }
 }
+
+void    check_first(t_list *tab)
+{
+    int i;
+    char *builtins[] = {"echo", "pwd", "export", "unset", "env", "exit", NULL};
+
+    i = 0;
+    if(tab->token == WORD)
+    {
+        while(builtins[i])
+        {
+            if(ft_strcmp(tab->input, builtins[i]) == 0)
+            printf("excute builtins \n");
+            //excute_builtins()
+            else
+                printf("its a word but not a builtins\n");
+        
+        i++;
+        }
+    }
+    else
+        printf("faux input check\n");
+}

@@ -14,6 +14,7 @@ int main()
             get_line(&tab, line);
             check_nodes(tab);
             print_nodes(tab);
+            check_first(tab);
             add_history(line);
             ft_free(tab);
             tab = NULL;

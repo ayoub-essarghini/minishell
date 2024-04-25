@@ -46,6 +46,7 @@ typedef struct s_list
 int    check_line(char *str);
 void	get_line(t_list **tab, char *line);
 void    check_nodes(t_list *tab);
+void    check_first(t_list *tab);
 
 // linked list
 
