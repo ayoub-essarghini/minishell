@@ -1,4 +1,4 @@
-#include "parsing.h"
+#include "../parsing.h"
 
 int all_alpha(char *str)
 {

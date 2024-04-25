@@ -1,38 +1,38 @@
 NAME = minishell
  
 SRCS =  minishell.c \
-		check_line.c \
-		get_line.c \
-		linked_list.c \
-		utils.c \
-		analyse_nodes.c \
+		./parsing/check_line.c \
+		./parsing/get_line.c \
+		./parsing/linked_list.c \
+		./parsing/utils.c \
+		./parsing/analyse_nodes.c \
 
 FLAGS = -Wall -Wextra -Werror 
 
-LIBFT = ./libft/libft.a
+LIBFT = ./parsing/libft/libft.a
 
 GCC = cc
 
 OBJS = $(SRCS:.c=.o)
 
-INCLUDE = parsing.h ./libft/libft.h
+INCLUDE = parsing.h ./parsing/libft/libft.h
 
 .c.o:
 	@$(GCC) $(FLAGS) -c $< -o $@
 
 $(NAME) : $(OBJS) $(INCLUDE)  
-	@make -C ./libft
+	@make -C ./parsing/libft
 	@$(GCC) $(OBJS) $(LIBFT) -lreadline $(FLAGS) -o $(NAME)
 	@echo "done"
 
 all: $(NAME) 
 
 clean:
-	@make clean -C ./libft
+	@make clean -C ./parsing/libft
 	@rm -f $(OBJS)
 	 
 fclean: clean
-	@make fclean -C ./libft
+	@make fclean -C ./parsing/libft
 	@rm -f $(NAME)
 
 re: fclean all

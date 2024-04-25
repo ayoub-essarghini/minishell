@@ -1,4 +1,4 @@
-#include "parsing.h"
+#include "../parsing.h"
 
 void    print_nodes(t_list *tab)
 {

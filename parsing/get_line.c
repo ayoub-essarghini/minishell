@@ -1,4 +1,4 @@
-#include "parsing.h"
+#include "../parsing.h"
 
 char	*ft_word(const char *str, int start, int end)
 {
