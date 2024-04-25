@@ -41,12 +41,12 @@ int main()
         {
             get_line(&tab, cmd);
             check_nodes(tab);
-            // print_nodes(tab);
-            check_first(tab);
+            print_nodes(tab);
+            // check_first(tab);
             add_history(cmd);
             ft_free(tab);
             tab = NULL;
         }
-        free(cmd);
+        // free(cmd);
     }
 }

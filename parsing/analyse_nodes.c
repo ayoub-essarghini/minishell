@@ -6,30 +6,29 @@ int all_alpha(char *str)
     while (str[i])
     {
         if (!((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')))
-            return (0); 
+            return (0);
         i++;
     }
-    return (1); 
+    return (1);
 }
 
-
-int    check_quotes(t_list *tab)
+int check_quotes(t_list *tab)
 {
     int count = 0;
     int i = 0;
 
-    while(tab)
+    while (tab)
     {
-        while(tab->input[i])
+        while (tab->input[i])
         {
-            if(tab->input[i] == '"' && tab->input[i - 1] == '\\')
-            i++;
-            else if(tab->input[i] == '"')
-            count += 1;
+            if (tab->input[i] == '"' && tab->input[i - 1] == '\\')
+                i++;
+            else if (tab->input[i] == '"')
+                count += 1;
         }
     }
-    if(count % 2 == 0)
-    return (1);
+    if (count % 2 == 0)
+        return (1);
     return (0);
 }
 
@@ -40,7 +39,13 @@ void check_nodes(t_list *tab)
         if (all_alpha(tab->input))
             tab->token = WORD;
         else if (!all_alpha(tab->input) && tab->input[0] == '-')
-            tab->token = OPTION;
+        {
+            if(!all_alpha(tab->input) && tab->input[0] == '-')
+            {
+                
+            }
+
+        }
         else if (!all_alpha(tab->input) && tab->input[0] == '$')
             tab->token = ENV;
         else if (strcmp(tab->input, "|") == 0)
@@ -54,26 +59,27 @@ void check_nodes(t_list *tab)
     }
 }
 
-void    check_first(t_list *tab)
+void check_first(t_list *tab)
 {
     int i;
     char *builtins[] = {"echo", "pwd", "export", "unset", "env", "exit", NULL};
 
     i = 0;
-    if(tab->token == WORD)
+    if (tab->token == WORD)
     {
-        while(builtins[i])
+        while (builtins[i])
         {
-            if(ft_strcmp(tab->input, builtins[i]) == 0)
-            // printf("excute builtins \n");
-            if (exec_builtin(tab)!= 0)
+            if (ft_strcmp(tab->input, builtins[i]) == 0)
             {
-                perror("exceve field");
+
+               //pefa
             }
-     
-        
-        i++;
+
+            i++;
         }
     }
-   
+    else if (tab->token == OPTION)
+    {
+        exec_cmd_with_option(tab);
+    }
 }
