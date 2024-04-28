@@ -59,7 +59,7 @@ void check_nodes(t_list *tab)
     }
 }
 
-void check_first(t_list *tab)
+void check_first(t_list *tab, t_envs *envs)
 {
     int i;
     char *builtins[] = {"echo", "pwd", "export", "unset", "env", "exit", NULL};
@@ -71,15 +71,11 @@ void check_first(t_list *tab)
         {
             if (ft_strcmp(tab->input, builtins[i]) == 0)
             {
-
-               //pefa
+             exec_builtin(tab,envs);
             }
 
             i++;
         }
     }
-    else if (tab->token == OPTION)
-    {
-        exec_cmd_with_option(tab);
-    }
+  
 }

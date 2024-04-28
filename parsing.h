@@ -47,8 +47,14 @@ typedef struct s_list
 int    check_line(char *str);
 void	get_line(t_list **tab, char *line);
 void    check_nodes(t_list *tab);
-void    check_first(t_list *tab);
-void exec_builtin(t_list *cmds);
+void check_first(t_list *tab, t_envs *envs);
+void exec_builtin(t_list *cmds, t_envs *envs);
+
+//execution
+
+void set_envs(char *envs[],t_envs **envs_lst);
+
+
 
 // linked list
 t_list	*ft_lstlast(t_list *lst);
@@ -57,7 +63,11 @@ void	ft_lstadd_back(t_list **lst, t_list *new);
 void	creat_nodes(t_list **head, char *input, int status);
 t_list	*ft_lstnew(char *input, int status);
 void exec_cmd_with_option(t_list *tab);
-
+t_envs *ft_lstlast2(t_envs *lst);
+int ft_lstsize2(t_envs *lst);
+void ft_lstadd_back2(t_envs **lst, t_envs *new);
+t_envs *ft_lstnew2(char *key,char *value);
+void creat_node(t_envs **head, char *key,char *value);
 // utils
 
 void    print_nodes(t_list *tab);

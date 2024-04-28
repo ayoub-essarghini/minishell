@@ -8,7 +8,7 @@
 typedef struct s_envs
 {
     char *key;
-    char operator;
+    char *value;
     struct s_envs *next;
 } t_envs;
 

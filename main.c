@@ -193,12 +193,9 @@ int main(int argc, char *argv[], char *env[])
             perror("getcwd");
             exit(EXIT_FAILURE);
         }
-
         char *name = strrchr(cwd, '/');
-
         char *root = getenv("HOME");
         root = strrchr(root, '/');
-
         if (strcmp(name + 1, root + 1) == 0)
         {
 

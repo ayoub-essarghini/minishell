@@ -23,30 +23,18 @@ void exec_cmd_with_option(t_list *tab)
 }
 // }
 
-void exec_builtin(t_list *cmds)
+void exec_builtin(t_list *cmds, t_envs *envs)
 {
-    pid_t pid = fork();
-    if (pid == 0)
+   if (ft_strcmp(cmds->input,"env") == 0)
+   {
+    while (envs != NULL)
     {
-        (void)cmds;
-        char *s = getenv("PATH");
-        char **arr = ft_split(s, ':');
-        int i = 0;
-        while (arr[i] != NULL)
-        {
-            printf("%s\n",arr[i]);
-            // char *cmd = ft_strjoin(arr[i], "/");
-            // cmd = ft_strjoin(cmd, cmds->input);
-            // // cmd = ft_strjoin(cmd, " -la");
-            // char **tt = ft_split(cmd, ' ');
-            // execve(cmd, tt, NULL);
-            i++;
-        }
+       printf("%s",envs->key);
+       envs = envs->next;
     }
-    else
-    {
-        wait(NULL);
-    }
+
+    printf("it working as well");
+   }
  
 }
 
