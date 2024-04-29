@@ -4,7 +4,7 @@ void set_and_colorize_prompt(char cwd[1045], char **name, char *root)
 
     *name = strrchr(cwd, '/');
 
-    root = getenv("HOME");
+    // root = get_myenv("HOME");
     root = strrchr(root, '/');
 
     if (strcmp(*name + 1, root + 1) == 0)
@@ -77,15 +77,15 @@ char *get_key(char *str)
 void set_envs(char *envs[], t_envs **envs_lst)
 {
     int i;
-    (void)envs_lst;
+    char *key;
+    char *value;
+
     i = 0;
     while (envs[i] != NULL)
     {
-        char *key = get_key(envs[i]);
-        char *value = get_value(envs[i]);
-        // creat_node(envs_lst, envs[i]);
-        printf("%s=", key);
-        printf("%s\n", value);
+        key = get_key(envs[i]);
+        value = get_value(envs[i]);
+        creat_node(envs_lst, key, value);
         i++;
     }
 }
@@ -101,19 +101,10 @@ int main(int argc, char *argv[], char *envs[])
     t_envs *env_list = NULL;
     char *root = NULL;
     char *cmd = NULL;
-
-    if (envs == NULL)
-    {
-        perror("env ");
-        exit(0);
-    }
-    // set_envs(envs,&env_list);
-    // while (env_list != NULL)
-    // {
-    //   printf("%s\n",env_list->key);
-    //   env_list = env_list->next;
-    // }
-
+    // int i = 0;
+    if (envs[0] == NULL)
+        set_defautl_env(&env_list);
+    set_envs(envs, &env_list);
     tab = NULL;
     while (1)
     {
@@ -122,16 +113,17 @@ int main(int argc, char *argv[], char *envs[])
             perror("getcwd");
             exit(EXIT_FAILURE);
         }
-        set_and_colorize_prompt(cwd, &name, root);
-
+        // set_and_colorize_prompt(cwd, &name, root);
+        name = "hello";
         cmd = readline(name);
         if (ft_strlen(cmd) > 0 && !check_line(cmd))
         {
-            get_line(&tab, cmd);
-            check_nodes(tab);
-            // print_nodes(tab);
-            check_first(tab, env_list);
-            add_history(cmd);
+            // get_line(&tab, cmd);
+            // check_nodes(tab);
+            // // print_nodes(tab);
+            // check_first(tab, env_list);
+            // add_history(cmd);
+            printf("         lslslslslsls");
             ft_free(tab);
             tab = NULL;
         }

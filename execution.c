@@ -23,17 +23,12 @@ void exec_cmd_with_option(t_list *tab)
 }
 // }
 
-void exec_builtin(t_list *cmds, t_envs *envs)
+void exec_builtin(t_list *cmds, t_envs **envs)
 {
+   
    if (ft_strcmp(cmds->input,"env") == 0)
    {
-    while (envs != NULL)
-    {
-       printf("%s",envs->key);
-       envs = envs->next;
-    }
-
-    printf("it working as well");
+    get_export(NULL,NULL,&envs);
    }
  
 }

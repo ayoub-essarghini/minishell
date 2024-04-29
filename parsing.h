@@ -48,11 +48,15 @@ int    check_line(char *str);
 void	get_line(t_list **tab, char *line);
 void    check_nodes(t_list *tab);
 void check_first(t_list *tab, t_envs *envs);
-void exec_builtin(t_list *cmds, t_envs *envs);
 
 //execution
 
 void set_envs(char *envs[],t_envs **envs_lst);
+char *get_value(char *str);
+char *get_key(char *str);
+void exec_builtin(t_list *cmds, t_envs **envs);
+void set_defautl_env(t_envs **envs);
+void get_export(char *key, char *value, t_envs *envs);
 
 
 

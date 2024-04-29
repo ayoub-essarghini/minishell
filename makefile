@@ -6,7 +6,7 @@ SRCS =  minishell.c \
 		./parsing/linked_list.c \
 		./parsing/utils.c \
 		./parsing/analyse_nodes.c \
-		execution.c envs_list.c
+		execution.c envs_list.c builtins.c
 
 FLAGS = -Wall -Wextra -Werror 
 
@@ -19,11 +19,11 @@ OBJS = $(SRCS:.c=.o)
 INCLUDE = parsing.h ./parsing/libft/libft.h
 
 .c.o:
-	@$(GCC) $(FLAGS) -c $< -o $@
+	@$(GCC)  -c $< -o $@
 
 $(NAME) : $(OBJS) $(INCLUDE)  
 	@make -C ./parsing/libft
-	@$(GCC) $(OBJS) $(LIBFT) -lreadline $(FLAGS) -o $(NAME) -fsanitize=address -g3
+	@$(GCC) $(OBJS) $(LIBFT) -lreadline -o $(NAME) -fsanitize=address -g3
 	@echo "done"
 
 all: $(NAME) 

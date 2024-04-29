@@ -71,7 +71,7 @@ void check_first(t_list *tab, t_envs *envs)
         {
             if (ft_strcmp(tab->input, builtins[i]) == 0)
             {
-             exec_builtin(tab,envs);
+             exec_builtin(tab,&envs);
             }
 
             i++;

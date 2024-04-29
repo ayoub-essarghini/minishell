@@ -69,8 +69,8 @@ void creat_node(t_envs **head, char *key, char *value)
     else
     {
         new = malloc(sizeof(t_envs));
-        new->key = strdup(key);
-        new->value= strdup(value);
+        new->key = ft_strdup(key);
+        new->value= ft_strdup(value);
         new->next = NULL;
         ft_lstadd_back2(head, new);
     }
