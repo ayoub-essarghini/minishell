@@ -26,6 +26,11 @@ int ft_lstsize2(t_envs *lst)
     return (i);
 }
 
+
+
+
+
+
 void ft_lstadd_back2(t_envs **lst, t_envs *new)
 {
     t_envs *add;
