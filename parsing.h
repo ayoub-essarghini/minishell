@@ -56,7 +56,8 @@ char *get_value(char *str);
 char *get_key(char *str);
 void exec_builtin(t_list *cmds, t_envs **envs);
 void set_defautl_env(t_envs **envs);
-void get_export(char *key, char *value, t_envs *envs);
+void get_export(char *key, char *value, t_envs **envs);
+void print_env(t_envs **envs);
 
 
 

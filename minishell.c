@@ -1,10 +1,29 @@
 #include "parsing.h"
-void set_and_colorize_prompt(char cwd[1045], char **name, char *root)
+
+char *get_myenv(char *key,t_envs **envs)
+{
+    t_envs *tmp = *envs;
+    char *value = NULL;
+    while (tmp)
+    {
+       if (ft_strcmp(tmp->key,key) == 0)
+       {
+            value = ft_strdup((const char *)tmp->value);
+       }
+       tmp = tmp->next;
+    }
+
+    return (value);
+    
+}
+
+void set_and_colorize_prompt(char cwd[1045], char **name, char *root,t_envs **envs)
 {
 
     *name = strrchr(cwd, '/');
 
-    // root = get_myenv("HOME");
+    root = get_myenv("HOME",&*envs);
+    // printf("%s hhh\n",root);
     root = strrchr(root, '/');
 
     if (strcmp(*name + 1, root + 1) == 0)
@@ -30,7 +49,7 @@ char *get_value(char *str)
     if (!str[i])
     {
         fprintf(stderr, "No '=' found in the input string\n");
-        exit(EXIT_FAILURE);
+        // exit(EXIT_FAILURE); 
     }
 
     i++; // Move past the '=' delimiter
@@ -44,7 +63,7 @@ char *get_value(char *str)
     if (value == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        // exit(EXIT_FAILURE);
     }
 
     strncpy(value, str + i, j); // Copy the value from the input string
@@ -65,7 +84,7 @@ char *get_key(char *str)
     {
         // Memory allocation failed
         fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        // exit(EXIT_FAILURE);
     }
 
     strncpy(key, str, i); // Copy the key from the input string
@@ -103,8 +122,9 @@ int main(int argc, char *argv[], char *envs[])
     char *cmd = NULL;
     // int i = 0;
     if (envs[0] == NULL)
-        set_defautl_env(&env_list);
-    set_envs(envs, &env_list);
+        set_defautl_env(&env_list); 
+    else
+        set_envs(envs, &env_list);
     tab = NULL;
     while (1)
     {
@@ -113,17 +133,18 @@ int main(int argc, char *argv[], char *envs[])
             perror("getcwd");
             exit(EXIT_FAILURE);
         }
-        // set_and_colorize_prompt(cwd, &name, root);
-        name = "hello";
+    
+        set_and_colorize_prompt(cwd, &name,root,&env_list);
+        // name = "hello";
         cmd = readline(name);
         if (ft_strlen(cmd) > 0 && !check_line(cmd))
         {
-            // get_line(&tab, cmd);
-            // check_nodes(tab);
-            // // print_nodes(tab);
-            // check_first(tab, env_list);
-            // add_history(cmd);
-            printf("         lslslslslsls");
+            get_line(&tab, cmd);
+            check_nodes(tab);
+            // print_nodes(tab);
+            check_first(tab, env_list);
+            add_history(cmd);
+
             ft_free(tab);
             tab = NULL;
         }
