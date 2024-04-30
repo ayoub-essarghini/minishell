@@ -8,7 +8,7 @@ char *get_myenv(char *key,t_envs **envs)
     {
        if (ft_strcmp(tmp->key,key) == 0)
        {
-            value = ft_strdup((const char *)tmp->value);
+            value = ft_strdup(tmp->value);
        }
        tmp = tmp->next;
     }
@@ -109,12 +109,26 @@ void set_envs(char *envs[], t_envs **envs_lst)
     }
 }
 
+char *get_mycwd(t_envs *env_list)
+{
+    t_envs *tmp = env_list;
+    char *pwd;
+
+    while (tmp)
+    {
+        if (ft_strcmp(tmp->key,"HOME") == 0)
+            pwd = ft_strdup(tmp->value);
+        tmp = tmp->next;
+    }
+    return (pwd);
+}
+
 int main(int argc, char *argv[], char *envs[])
 {
     (void)argc;
     (void)argv;
     (void)envs;
-    char cwd[1045];
+    char *cwd;
     char *name = NULL;
     t_list *tab;
     t_envs *env_list = NULL;
@@ -128,14 +142,8 @@ int main(int argc, char *argv[], char *envs[])
     tab = NULL;
     while (1)
     {
-        if (getcwd(cwd, sizeof(cwd)) == NULL)
-        {
-            perror("getcwd");
-            exit(EXIT_FAILURE);
-        }
-    
+        cwd = get_mycwd(env_list);
         set_and_colorize_prompt(cwd, &name,root,&env_list);
-        // name = "hello";
         cmd = readline(name);
         if (ft_strlen(cmd) > 0 && !check_line(cmd))
         {
@@ -144,7 +152,6 @@ int main(int argc, char *argv[], char *envs[])
             // print_nodes(tab);
             check_first(tab, env_list);
             add_history(cmd);
-
             ft_free(tab);
             tab = NULL;
         }

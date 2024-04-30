@@ -62,7 +62,7 @@ void check_nodes(t_list *tab)
 void check_first(t_list *tab, t_envs *envs)
 {
     int i;
-    char *builtins[] = {"echo", "pwd", "export", "unset", "env", "exit", NULL};
+    char *builtins[] = {"echo","cd", "pwd", "export", "unset", "env", "exit", NULL};
 
     i = 0;
     if (tab->token == WORD)

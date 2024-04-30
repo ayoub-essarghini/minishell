@@ -12,12 +12,7 @@ typedef struct s_envs
     struct s_envs *next;
 } t_envs;
 
-typedef struct s_infos
-{
 
-    char *cwd;
-    char *cmd[];
 
-} t_infos;
 
 #endif

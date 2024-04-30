@@ -4,9 +4,9 @@ SRCS =  minishell.c \
 		./parsing/check_line.c \
 		./parsing/get_line.c \
 		./parsing/linked_list.c \
-		./parsing/utils.c \
+		./parsing/utils.c export.c \
 		./parsing/analyse_nodes.c \
-		execution.c envs_list.c builtins.c
+		execution.c envs_list.c
 
 FLAGS = -Wall -Wextra -Werror 
 
