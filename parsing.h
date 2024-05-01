@@ -62,6 +62,7 @@ int exist_env(char *key, t_envs **envs);
 void append_to_env(t_envs **envs, char *key, char *value);
 char *get_myenv(char *key,t_envs **envs);
 void change_directory(t_list *cmds, t_envs **envs);
+void exec_non_buitin(t_list *tab, t_envs **envs);
 
 
 // linked list

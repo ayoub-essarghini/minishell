@@ -16,6 +16,20 @@ char *get_myenv(char *key, t_envs **envs)
     return (value);
 }
 
+void print_ascii()
+{
+    printf("\033[32m"); // Set color to green
+    printf("#############################################################################################################\n");
+    printf("#███╗   ███╗ █████╗ ██████╗ ███╗   ██╗███████╗███████╗███████╗      ███████╗██╗  ██╗███████╗██╗     ██╗     #\n");
+    printf("#████╗ ████║██╔══██╗██╔══██╗████╗  ██║██╔════╝██╔════╝██╔════╝      ██╔════╝██║  ██║██╔════╝██║     ██║     #\n");
+    printf("#██╔████╔██║███████║██║  ██║██╔██╗ ██║█████╗  ███████╗███████╗█████╗███████╗███████║█████╗  ██║     ██║     #\n");
+    printf("#██║╚██╔╝██║██╔══██║██║  ██║██║╚██╗██║██╔══╝  ╚════██║╚════██║╚════╝╚════██║██╔══██║██╔══╝  ██║     ██║     #\n");
+    printf("#██║ ╚═╝ ██║██║  ██║██████╔╝██║ ╚████║███████╗███████║███████║      ███████║██║  ██║███████╗███████╗███████╗#\n");
+    printf("#╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═══╝╚══════╝╚══════╝╚══════╝      ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝#\n");
+    printf("#############################################################################################################\n");
+    printf("\033[0m");
+}
+
 void set_and_colorize_prompt(char cwd[1045], char **name, char *root, t_envs **envs)
 {
 
@@ -127,12 +141,14 @@ int main(int argc, char *argv[], char *envs[])
     (void)argc;
     (void)argv;
     (void)envs;
-    char *cwd;
+    char cwd[1045];
     char *name = NULL;
     t_list *tab;
     t_envs *env_list = NULL;
     char *root = NULL;
     char *cmd = NULL;
+
+    print_ascii();
     // int i = 0;
     if (envs[0] == NULL)
         set_defautl_env(&env_list);
@@ -141,7 +157,11 @@ int main(int argc, char *argv[], char *envs[])
     tab = NULL;
     while (1)
     {
-        cwd = get_mycwd(env_list);
+        if (getcwd(cwd, sizeof(cwd)) == NULL)
+        {
+            perror("getcwd");
+            exit(EXIT_FAILURE);
+        }
         set_and_colorize_prompt(cwd, &name, root, &env_list);
         cmd = readline(name);
         if (ft_strlen(cmd) > 0 && !check_line(cmd))

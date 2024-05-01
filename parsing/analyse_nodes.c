@@ -40,11 +40,9 @@ void check_nodes(t_list *tab)
             tab->token = WORD;
         else if (!all_alpha(tab->input) && tab->input[0] == '-')
         {
-            if(!all_alpha(tab->input) && tab->input[0] == '-')
+            if (!all_alpha(tab->input) && tab->input[0] == '-')
             {
-                
             }
-
         }
         else if (!all_alpha(tab->input) && tab->input[0] == '$')
             tab->token = ENV;
@@ -59,23 +57,29 @@ void check_nodes(t_list *tab)
     }
 }
 
-void check_first(t_list *tab, t_envs *envs)
+int is_builtin(char *cmd)
 {
     int i;
-    char *builtins[] = {"echo","cd", "pwd", "export", "unset", "env", "exit", NULL};
+    char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", NULL};
 
     i = 0;
+    while (builtins[i])
+    {
+        if (ft_strcmp(cmd, builtins[i]) == 0)
+            return (0);
+        i++;
+    }
+    return (-1);
+}
+
+void check_first(t_list *tab, t_envs *envs)
+{
+
     if (tab->token == WORD)
     {
-        while (builtins[i])
-        {
-            if (ft_strcmp(tab->input, builtins[i]) == 0)
-            {
-             exec_builtin(tab,&envs);
-            }
-
-            i++;
-        }
+        if (is_builtin(tab->input) == 0)
+            exec_builtin(tab, &envs);
+        else
+            exec_non_buitin(tab,&envs);
     }
-  
 }

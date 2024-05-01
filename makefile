@@ -26,6 +26,7 @@ $(NAME) : $(OBJS) $(INCLUDE)
 	@$(GCC) $(OBJS) $(LIBFT) -lreadline -o $(NAME) -fsanitize=address -g3
 	@echo "done"
 
+
 all: $(NAME) 
 
 clean:
