@@ -38,12 +38,6 @@ void check_nodes(t_list *tab)
     {
         if (all_alpha(tab->input))
             tab->token = WORD;
-        else if (!all_alpha(tab->input) && tab->input[0] == '-')
-        {
-            if (!all_alpha(tab->input) && tab->input[0] == '-')
-            {
-            }
-        }
         else if (!all_alpha(tab->input) && tab->input[0] == '$')
             tab->token = ENV;
         else if (strcmp(tab->input, "|") == 0)
@@ -60,7 +54,7 @@ void check_nodes(t_list *tab)
 int is_builtin(char *cmd)
 {
     int i;
-    char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", NULL};
+    char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env","exit", NULL};
 
     i = 0;
     while (builtins[i])

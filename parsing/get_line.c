@@ -71,9 +71,10 @@ void get_line(t_list **tab, char *line)
     int i = 0;
     int start;
     
+    while (line[i] == ' ' || line[i] == '\t') 
+            i++;
     while (line[i] && line[i] != '\0') 
 	{
-        start = i;
         if (line[i] == '\'') 
 		{
                 // If double quote is encountered, find the closing double quote
@@ -82,6 +83,7 @@ void get_line(t_list **tab, char *line)
             while (line[i] && line[i] != '\'') 
                 i++; 
             single_quote(tab, line, start, i);
+            i++;
         }
         else if (line[i] == '"') 
 		{
@@ -90,9 +92,11 @@ void get_line(t_list **tab, char *line)
             while (line[i] && line[i] != '"') 
                 i++; 
             double_quote(tab, line, start, i);
+            i++;
         }  
 		else 
         {
+            start = i;
             while (line[i] && line[i] != ' ' && line[i] != '\t' && line[i] != '\'' && line[i] != '"') 
                 i++;
             word(tab, line, start, i);

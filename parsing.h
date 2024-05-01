@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+
+
 typedef enum s_state
 {
 	Single = 1,
