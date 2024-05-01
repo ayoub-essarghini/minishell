@@ -1,28 +1,27 @@
 #include "parsing.h"
 
-char *get_myenv(char *key,t_envs **envs)
+char *get_myenv(char *key, t_envs **envs)
 {
     t_envs *tmp = *envs;
     char *value = NULL;
     while (tmp)
     {
-       if (ft_strcmp(tmp->key,key) == 0)
-       {
+        if (ft_strcmp(tmp->key, key) == 0)
+        {
             value = ft_strdup(tmp->value);
-       }
-       tmp = tmp->next;
+        }
+        tmp = tmp->next;
     }
 
     return (value);
-    
 }
 
-void set_and_colorize_prompt(char cwd[1045], char **name, char *root,t_envs **envs)
+void set_and_colorize_prompt(char cwd[1045], char **name, char *root, t_envs **envs)
 {
 
     *name = strrchr(cwd, '/');
 
-    root = get_myenv("HOME",&*envs);
+    root = get_myenv("HOME", &*envs);
     // printf("%s hhh\n",root);
     root = strrchr(root, '/');
 
@@ -49,7 +48,7 @@ char *get_value(char *str)
     if (!str[i])
     {
         fprintf(stderr, "No '=' found in the input string\n");
-        // exit(EXIT_FAILURE); 
+        // exit(EXIT_FAILURE);
     }
 
     i++; // Move past the '=' delimiter
@@ -116,7 +115,7 @@ char *get_mycwd(t_envs *env_list)
 
     while (tmp)
     {
-        if (ft_strcmp(tmp->key,"HOME") == 0)
+        if (ft_strcmp(tmp->key, "PWD") == 0)
             pwd = ft_strdup(tmp->value);
         tmp = tmp->next;
     }
@@ -136,14 +135,14 @@ int main(int argc, char *argv[], char *envs[])
     char *cmd = NULL;
     // int i = 0;
     if (envs[0] == NULL)
-        set_defautl_env(&env_list); 
+        set_defautl_env(&env_list);
     else
         set_envs(envs, &env_list);
     tab = NULL;
     while (1)
     {
         cwd = get_mycwd(env_list);
-        set_and_colorize_prompt(cwd, &name,root,&env_list);
+        set_and_colorize_prompt(cwd, &name, root, &env_list);
         cmd = readline(name);
         if (ft_strlen(cmd) > 0 && !check_line(cmd))
         {

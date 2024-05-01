@@ -6,7 +6,7 @@ SRCS =  minishell.c \
 		./parsing/linked_list.c \
 		./parsing/utils.c export.c \
 		./parsing/analyse_nodes.c \
-		execution.c envs_list.c
+		execution.c envs_list.c change_dir.c \
 
 FLAGS = -Wall -Wextra -Werror 
 

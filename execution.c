@@ -48,40 +48,7 @@ void exec_builtin(t_list *cmds, t_envs **envs)
             printf("unset : not enough arguments\n");
     }
     else if (ft_strcmp(cmds->input, "echo") == 0)
-    {
         echo_cmd(cmds);
-    }
     else if (ft_strcmp(cmds->input, "cd") == 0)
-    {
-        // printf("cd");
-        if (cmds->next != NULL)
-        {
-            char *root = get_myenv("HOME",&*envs);
-            if (cmds->input[0] == '/')
-                printf("is it");
-            // root = ft_strjoin(root, cmds->next->input);
-            // printf("%s\n", root);
-            // if (chdir("/nfs") == -1)
-            // {
-            //     perror("cd");
-            // }
-
-            // pid_t pid = fork();
-
-            // if (pid == 0)
-            // {
-            // char *s[] = {"ls", "-la", NULL};
-            // if (execve("/bin/ls", s, NULL) == -1)
-            // {
-            //     perror("ls");
-            // }
-
-            // }
-            // else
-            // {
-            //     wait(NULL);
-            // }
-      
-        }
-    }
+        change_directory(cmds,&*envs);
 }
