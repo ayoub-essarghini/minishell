@@ -168,8 +168,8 @@ int main(int argc, char *argv[], char *envs[])
         {
             get_line(&tab, cmd);
             check_nodes(tab);
-            print_nodes(tab);
-            // check_first(tab, env_list);
+            // print_nodes(tab);
+            check_first(tab, env_list);
             add_history(cmd);
             ft_free(tab);
             tab = NULL;

@@ -54,7 +54,7 @@ void check_nodes(t_list *tab)
 int is_builtin(char *cmd)
 {
     int i;
-    char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env","exit", NULL};
+    char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
 
     i = 0;
     while (builtins[i])
@@ -66,14 +66,33 @@ int is_builtin(char *cmd)
     return (-1);
 }
 
+
+int exist_pipe(t_list *tab)
+{
+    while (tab)
+    {
+        if (ft_strcmp(tab->input, "|") == 0)
+        {
+            return 0;
+        }
+        tab = tab->next;
+    }
+    return (-1);
+}
+
 void check_first(t_list *tab, t_envs *envs)
 {
 
     if (tab->token == WORD)
     {
-        if (is_builtin(tab->input) == 0)
-            exec_builtin(tab, &envs);
+        if (exist_pipe(tab) == -1)
+        {
+            if (is_builtin(tab->input) == 0)
+                exec_builtin(tab, &envs);
+            else
+                exec_non_buitin(tab, &envs);
+        }
         else
-            exec_non_buitin(tab,&envs);
+            exec_with_pipeline(tab);
     }
 }

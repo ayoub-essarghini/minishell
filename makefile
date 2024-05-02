@@ -2,7 +2,7 @@ NAME = minishell
  
 SRCS =  minishell.c \
 		./parsing/check_line.c \
-		./parsing/get_line.c \
+		./parsing/get_line.c  pipe_exec.c \
 		./parsing/linked_list.c \
 		./parsing/utils.c export.c \
 		./parsing/analyse_nodes.c \
