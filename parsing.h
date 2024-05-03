@@ -61,12 +61,13 @@ void remove_env(t_list *cmds, t_envs **envs);
 void set_export(t_list *cmds, t_envs **envs);
 void get_export(char *key, char *value, t_envs **envs);
 void print_env(t_envs **envs);
+int is_builtin(char *cmd);
 int exist_env(char *key, t_envs **envs);
 void append_to_env(t_envs **envs, char *key, char *value);
 char *get_myenv(char *key,t_envs **envs);
 void change_directory(t_list *cmds, t_envs **envs);
 void exec_non_buitin(t_list *tab, t_envs **envs);
-int exec_with_pipeline(t_list *tab);
+int exec_with_pipeline(t_list *tab,t_envs **envs);
 
 
 // linked list

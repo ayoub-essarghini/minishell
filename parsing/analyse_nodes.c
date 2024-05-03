@@ -54,7 +54,8 @@ void check_nodes(t_list *tab)
 int is_builtin(char *cmd)
 {
     int i;
-    char *builtins[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
+    char *builtins[] = {"echo", "cd", "pwd", "export",
+     "unset", "env", "exit", NULL};
 
     i = 0;
     while (builtins[i])
@@ -93,6 +94,7 @@ void check_first(t_list *tab, t_envs *envs)
                 exec_non_buitin(tab, &envs);
         }
         else
-            exec_with_pipeline(tab);
+            exec_with_pipeline(tab,&envs);
+     
     }
 }
