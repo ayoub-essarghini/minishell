@@ -43,7 +43,7 @@ int check_pipes(int (*pipefds)[2], int n)
     return 0;
 }
 
-int exec_with_pipeline(t_list *tab,t_envs **envs)
+int exec_with_pipeline(t_list *tab)
 {
     char *str = conv_to_cmds(tab);
     char **arr = ft_split(str, '|');
@@ -123,12 +123,12 @@ int exec_with_pipeline(t_list *tab,t_envs **envs)
             args[num_args] = NULL;
             char *get_path = getenv("PATH");
             char **paths = ft_split(get_path, ':');
-            // if (flag == 1 && k == 0)
-            // {
-            //     exec_builtin(tab,NULL);
-            // }
-            // else
-            // {
+            if (flag == 1 && k == 0)
+            {
+                exec_builtin(tab,envs);
+            }
+            else
+            {
 
                 int ii;
                 while (paths && paths[ii])
@@ -141,15 +141,14 @@ int exec_with_pipeline(t_list *tab,t_envs **envs)
                     {
                         ii++;
                     }
-                    else
-                    {
+                    else {
                         free(new_cmd);
                     }
                     free(new_cmd);
                 }
                 perror(args[0]);
                 exit(EXIT_FAILURE);
-            // }
+            } 
         }
         k++;
     }
