@@ -86,7 +86,16 @@ void exec_builtin(t_list *cmds, t_envs **envs)
     if (ft_strcmp(cmds->input, "env") == 0)
         get_export(NULL, NULL, &*envs);
     else if (ft_strcmp(cmds->input, "exit") == 0)
-        exit(0);
+    {
+        if (cmds->next != NULL)
+        {
+            int status = ft_atoi(cmds->next->input);
+            if (status)
+                exit(status);
+            else
+                exit(0);
+        }
+    }
     else if (ft_strcmp(cmds->input, "export") == 0)
     {
         if (cmds->next == NULL)
