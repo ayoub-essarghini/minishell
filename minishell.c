@@ -50,61 +50,8 @@ void set_and_colorize_prompt(char cwd[1045], char **name, char *root, t_envs **e
         *name = ft_strjoin(*name, "\33[0m\033[33m ➜\033[0m ");
     }
 }
-char *get_value(char *str)
-{
-    size_t i = 0;
-    int j = 0;
-    while (str[i] && str[i] != '=')
-    {
-        i++;
-    }
 
-    if (!str[i])
-    {
-        fprintf(stderr, "No '=' found in the input string\n");
-        // exit(EXIT_FAILURE);
-    }
 
-    i++; // Move past the '=' delimiter
-    j = 0;
-    while (str[i + j])
-    {
-        j++;
-    }
-
-    char *value = malloc((j + 1) * sizeof(char)); // Allocate memory for the value (+1 for the null terminator)
-    if (value == NULL)
-    {
-        fprintf(stderr, "Memory allocation failed\n");
-        // exit(EXIT_FAILURE);
-    }
-
-    strncpy(value, str + i, j); // Copy the value from the input string
-    value[j] = '\0';            // Null-terminate the value string
-
-    return value;
-}
-char *get_key(char *str)
-{
-    size_t i = 0;
-    while (str[i] && str[i] != '=')
-    {
-        i++;
-    }
-
-    char *key = malloc((i + 1) * sizeof(char)); // Allocate memory for the key (+1 for the null terminator)
-    if (key == NULL)
-    {
-        // Memory allocation failed
-        fprintf(stderr, "Memory allocation failed\n");
-        // exit(EXIT_FAILURE);
-    }
-
-    strncpy(key, str, i); // Copy the key from the input string
-    key[i] = '\0';        // Null-terminate the key string
-
-    return key;
-}
 
 void set_envs(char *envs[], t_envs **envs_lst)
 {

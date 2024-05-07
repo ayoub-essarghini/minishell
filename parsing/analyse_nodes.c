@@ -55,7 +55,7 @@ int is_builtin(char *cmd)
 {
     int i;
     char *builtins[] = {"echo", "cd", "pwd", "export",
-     "unset", "env", "exit", NULL};
+                        "unset", "env", "exit", NULL};
 
     i = 0;
     while (builtins[i])
@@ -66,7 +66,6 @@ int is_builtin(char *cmd)
     }
     return (-1);
 }
-
 
 int exist_pipe(t_list *tab)
 {
@@ -94,7 +93,12 @@ void check_first(t_list *tab, t_envs *envs)
                 exec_non_buitin(tab, &envs);
         }
         else
-            exec_with_pipeline(tab,&envs);
-     
+            exec_with_pipeline(tab, &envs);
+    }
+    else if (tab->token == ENV)
+    {
+        char *str = get_myenv(tab->input + 1, &envs);
+        if (str)
+            printf("%s\n", str);
     }
 }

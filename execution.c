@@ -1,6 +1,6 @@
 #include "parsing.h"
 
-void echo_cmd(t_list *cmds)
+void echo_cmd(t_list *cmds,t_envs *envs)
 {
 
     t_list *tmp = cmds->next;
@@ -20,9 +20,24 @@ void echo_cmd(t_list *cmds)
         {
             while (tmp)
             {
-                printf("%s", tmp->input);
-                if (tmp->next != NULL)
-                    printf(" ");
+                if (tmp->token == ENV)
+                {
+                    // if (envs != NULL)
+                        printf("%s\n",envs->key);
+                    printf("%s\n",tmp->input);
+                    char *value = get_myenv(tmp->input+1,&envs);
+                    if (value)
+                        printf("%s\n",value);
+                    else
+                        printf("error");
+                }
+                else
+                {
+                    printf("%s", tmp->input);
+                    if (tmp->next != NULL)
+                        printf(" ");
+                }
+
                 tmp = tmp->next;
             }
             printf("\n");
@@ -55,7 +70,6 @@ void exec_non_buitin(t_list *tab, t_envs **envs)
     char **paths = ft_split(get_path, ':');
 
     pid_t pid = fork();
-
     if (pid == 0)
     {
         while (paths[i])
@@ -98,7 +112,7 @@ void exec_builtin(t_list *cmds, t_envs **envs)
     }
     else if (ft_strcmp(cmds->input, "export") == 0)
     {
-        if (cmds->next == NULL)
+        if (cmds->next == NULL || ft_strcmp(cmds->next->input, "|") == 0)
             get_export(NULL, NULL, &*envs);
         else
             set_export(cmds, &*envs);
@@ -110,13 +124,14 @@ void exec_builtin(t_list *cmds, t_envs **envs)
         else
             printf("unset : not enough arguments\n");
     }
-    else if (ft_strcmp(cmds->input, "echo") == 0)
-        echo_cmd(cmds);
+    else if (ft_strcmp(cmds->input, "echo") == 0 || ft_strcmp(cmds->next->input, "|") == 0)
+        echo_cmd(cmds,*envs);
     else if (ft_strcmp(cmds->input, "cd") == 0)
         change_directory(cmds, &*envs);
-    else if (ft_strcmp(cmds->input, "pwd") == 0)
+    else if (cmds && ft_strcmp(cmds->input, "pwd") == 0)
     {
         char *pwd = get_myenv("PWD", &*envs);
-        printf("%s\n", pwd);
+        if (pwd != NULL)
+            printf("%s\n", pwd);
     }
 }
