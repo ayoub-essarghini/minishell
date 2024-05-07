@@ -94,7 +94,7 @@ void check_first(t_list *tab, t_envs *envs)
                 exec_non_buitin(tab, &envs);
         }
         else
-            exec_with_pipeline(tab);
+            exec_with_pipeline(tab,&envs);
      
     }
 }

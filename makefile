@@ -23,7 +23,7 @@ INCLUDE = parsing.h ./parsing/libft/libft.h
 
 $(NAME) : $(OBJS) $(INCLUDE)  
 	@make -C ./parsing/libft
-	@$(GCC) $(OBJS) $(LIBFT) -lreadline -o $(NAME) -fsanitize=address -g
+	@$(GCC) $(OBJS) $(LIBFT) -lreadline -o $(NAME) #-fsanitize=address -g
 	@echo "done"
 
 

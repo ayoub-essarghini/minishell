@@ -43,27 +43,16 @@ int check_pipes(int (*pipefds)[2], int n)
     return 0;
 }
 
-int exec_with_pipeline(t_list *tab)
+int exec_with_pipeline(t_list *tab, t_envs **envs)
 {
     char *str = conv_to_cmds(tab);
     char **arr = ft_split(str, '|');
     int i = 0;
-    // if(!envs)
-    // {
-    //     printf("e");
-    //     exit(0);
-    // }
-    int flag = 0;
-
-    if (tab && is_builtin(tab->input) == 0)
-        flag = 1;
-
-    // int pipefds[i-1][2];
 
     while (arr[i])
         i++;
 
-    int(*pipefds)[2] = malloc(sizeof(int *)  * (i - 1));
+    int(*pipefds)[2] = malloc(sizeof(int *) * (i - 1));
     if (!pipefds)
         printf("error ocurred");
 
@@ -75,6 +64,7 @@ int exec_with_pipeline(t_list *tab)
     int k = 0;
     while (k < i)
     {
+      
         if ((pid = fork()) == -1)
         {
             perror("fork");
@@ -91,7 +81,7 @@ int exec_with_pipeline(t_list *tab)
                 close(pipefds[k - 1][1]); // Close write end of previous pipe
             }
 
-            // Redirect output to next command's input
+            // Redirect output to next command  input
             if (k < i - 1)
             {
                 dup2(pipefds[k][1], STDOUT_FILENO);
@@ -111,7 +101,7 @@ int exec_with_pipeline(t_list *tab)
                 l++;
             }
 
-            char *args[32] ={0}; // Assuming maximum 31 arguments
+            char *args[32] = {0}; // Assuming maximum 31 arguments
             int num_args = 0;
 
             char *arg_token = strtok(arr[k], " \n");
@@ -123,9 +113,12 @@ int exec_with_pipeline(t_list *tab)
             args[num_args] = NULL;
             char *get_path = getenv("PATH");
             char **paths = ft_split(get_path, ':');
-            if (flag == 1 && k == 0)
+            if (is_builtin(args[0]) == 0)
             {
-                exec_builtin(tab,envs);
+                exec_builtin(tab,&*envs);
+                // perror(args[0]);
+                exit(EXIT_SUCCESS);
+                // rl_redisplay();
             }
             else
             {
@@ -133,7 +126,7 @@ int exec_with_pipeline(t_list *tab)
                 int ii;
                 while (paths && paths[ii])
                 {
-    // printf("----->%p\n",envs);
+                    // printf("----->%p\n",envs);
                     char *new_cmd = ft_strjoin(paths[ii], "/");
                     new_cmd = ft_strjoin(new_cmd, args[0]);
                     // printf("%s\n",new_cmd);
@@ -141,14 +134,15 @@ int exec_with_pipeline(t_list *tab)
                     {
                         ii++;
                     }
-                    else {
+                    else
+                    {
                         free(new_cmd);
                     }
                     free(new_cmd);
                 }
                 perror(args[0]);
                 exit(EXIT_FAILURE);
-            } 
+            }
         }
         k++;
     }

@@ -5,7 +5,11 @@ void print_env(t_envs **envs)
     t_envs *tmp = *envs;
     while (tmp)
     {
-        printf("%s=%s\n", tmp->key, tmp->value);
+        // printf("%s=%s\n", tmp->key, tmp->value);
+        ft_putstr_fd(tmp->key,STDOUT_FILENO);
+        ft_putstr_fd("=",STDOUT_FILENO);
+        ft_putstr_fd(tmp->value,STDOUT_FILENO);
+        ft_putstr_fd("\n",STDOUT_FILENO);
         tmp = tmp->next;
     }
 }

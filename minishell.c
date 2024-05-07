@@ -148,7 +148,7 @@ int main(int argc, char *argv[], char *envs[])
     char *root = NULL;
     char *cmd = NULL;
 
-    print_ascii();
+    // print_ascii();
     // int i = 0;
     if (envs[0] == NULL)
         set_defautl_env(&env_list);
