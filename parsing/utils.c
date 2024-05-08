@@ -18,6 +18,10 @@ void    print_nodes(t_list *tab)
         printf("   ->REDIR_IN\n");
         if(tab->token == REDIR_OUT)
         printf("   ->REDIR_OUT\n");
+        if(tab->token == HERE_DOC)
+        printf("   ->HERE_DOC\n");
+        if(tab->token == APPEND)
+        printf("   ->APPEND\n");
         tab = tab->next;
         i++;
     }

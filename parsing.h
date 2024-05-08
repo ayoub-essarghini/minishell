@@ -33,7 +33,7 @@ typedef enum e_token
 	REDIR_IN,
 	REDIR_OUT,
 	HERE_DOC,
-	DREDIR_OUT,
+	APPEND,
 } t_token;
 
 typedef struct s_list
@@ -69,6 +69,7 @@ void echo_cmd(t_list *cmds, t_envs *envs);
 void change_directory(t_list *cmds, t_envs **envs);
 void exec_non_buitin(t_list *tab, t_envs **envs);
 int exec_with_pipeline(t_list *tab, t_envs **envs);
+void handle_here_doc(t_list *tab, t_envs *envs);
 
 
 // linked list
@@ -86,5 +87,13 @@ void creat_node(t_envs **head, char *key, char *value);
 void print_nodes(t_list *tab);
 void ft_free(t_list *tab);
 void ft_error(t_list *tab);
+
+
+//here doc list
+void creat_node3(t_heredoc **head, char *input, char *delimiter);
+t_heredoc *ft_lstnew3(char *input, char *delimiter);
+void ft_lstadd_back3(t_heredoc **lst, t_heredoc *new);
+int ft_lstsize3(t_heredoc *lst);
+t_heredoc *ft_lstlast3(t_heredoc *lst);
 
 #endif

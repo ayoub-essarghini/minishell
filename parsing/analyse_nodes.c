@@ -46,6 +46,10 @@ void check_nodes(t_list *tab)
             tab->token = REDIR_IN;
         else if (strcmp(tab->input, ">") == 0)
             tab->token = REDIR_OUT;
+        else if (strcmp(tab->input, "<<") == 0)
+            tab->token = HERE_DOC;
+        else if (strcmp(tab->input, ">>") == 0)
+            tab->token = APPEND;
 
         tab = tab->next;
     }
@@ -69,13 +73,28 @@ int is_builtin(char *cmd)
 
 int exist_pipe(t_list *tab)
 {
-    while (tab)
+    t_list *tmp = tab;
+    while (tmp)
     {
-        if (ft_strcmp(tab->input, "|") == 0)
+        if (ft_strcmp(tmp->input, "|") == 0)
         {
             return 0;
         }
-        tab = tab->next;
+        tmp = tmp->next;
+    }
+    return (-1);
+}
+
+int exist_here_doc(t_list *tab)
+{
+    t_list *tmp = tab;
+    while (tmp)
+    {
+        if (ft_strcmp(tmp->input, "<<") == 0)
+        {
+            return 0;
+        }
+        tmp = tmp->next;
     }
     return (-1);
 }
@@ -85,12 +104,18 @@ void check_first(t_list *tab, t_envs *envs)
 
     if (tab->token == WORD)
     {
-        if (exist_pipe(tab) == -1)
+        // if (exist_pipe(tab) == -1)
+        // {
+        //     if (is_builtin(tab->input) == 0)
+        //         exec_builtin(tab, &envs);
+        //     else
+        //         exec_non_buitin(tab, &envs);
+        // }
+        // else 
+        if (exist_here_doc(tab) == 0)
         {
-            if (is_builtin(tab->input) == 0)
-                exec_builtin(tab, &envs);
-            else
-                exec_non_buitin(tab, &envs);
+            printf("is it here doc here");
+              handle_here_doc(tab,envs);
         }
         else
             exec_with_pipeline(tab, &envs);
@@ -100,5 +125,9 @@ void check_first(t_list *tab, t_envs *envs)
         char *str = get_myenv(tab->input + 1, &envs);
         if (str)
             printf("%s\n", str);
+    }
+    else if (tab->token == HERE_DOC)
+    {
+        handle_here_doc(tab,envs);
     }
 }

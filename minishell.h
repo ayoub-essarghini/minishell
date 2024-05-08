@@ -12,7 +12,12 @@ typedef struct s_envs
     struct s_envs *next;
 } t_envs;
 
+typedef struct s_here_doc
+{
+    char *here_doc;
+    char *delimiter;
+    struct s_here_doc *next;
 
-
+} t_heredoc;
 
 #endif
