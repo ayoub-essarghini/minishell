@@ -125,18 +125,27 @@ void check_first(t_list *tab, t_envs *envs)
                 if (exist_here_doc(tab) == 0)
                 {
                     t_list *tmp = tab;
-                    while (tab)
+                    while (tmp)
                     {
-                       if (tab->token == HERE_DOC && tab->next)
+                       if (tmp->token == HERE_DOC && tmp->next)
                        {
-                        open_heredoc(tab->input,tab->next->input);
+                        open_heredoc(tmp->input,tmp->next->input);
                        }
+                       tmp = tmp->next;
                     }
-                    
+
+                    char *args[] = {"/bin/ls", "-la", NULL};
+                    if (execve(args[0],args,NULL) == -1)
+                    {
+                            perror("ls");
+                    }
                   
                     
                 }
-                exec_non_buitin(tab, &envs);
+                else
+                {
+                    exec_non_buitin(tab, &envs);
+                }
 
             }
         }

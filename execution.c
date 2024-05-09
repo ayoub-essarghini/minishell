@@ -85,30 +85,34 @@ void exec_non_buitin(t_list *tab, t_envs **envs)
     if (pid == 0)
     {
 
-       
         if (args[0][0] != '.')
         {
-            while (paths[i])
+
+            // printf("is it a programme\n");
+            if (ft_strcmp(args[0], "<<") != 0)
             {
-                char *new_cmd = ft_strjoin(paths[i], "/");
-                new_cmd = ft_strjoin(new_cmd, args[0]);
-                // printf("%s\n",new_cmd);
-                if (execve(new_cmd, args, NULL) == -1)
+                while (paths[i])
                 {
-                    i++;
-                }
-                else
-                {
+
+                    char *new_cmd = ft_strjoin(paths[i], "/");
+                    new_cmd = ft_strjoin(new_cmd, args[0]);
+                    // printf("%s\n",new_cmd);
+                    if (execve(new_cmd, args, NULL) == -1)
+                    {
+                        i++;
+                    }
+                    else
+                    {
+                        free(new_cmd);
+                        return;
+                    }
                     free(new_cmd);
-                    return;
                 }
-                free(new_cmd);
+                perror(args[0]);
             }
-            perror(args[0]);
         }
         else
         {
-            // printf("is it a programme\n");
 
             if (execve(args[0], args, NULL) == -1)
             {
