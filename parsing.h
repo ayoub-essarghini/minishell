@@ -70,6 +70,7 @@ void change_directory(t_list *cmds, t_envs **envs);
 void exec_non_buitin(t_list *tab, t_envs **envs);
 int exec_with_pipeline(t_list *tab, t_envs **envs);
 void handle_here_doc(t_list *tab, t_envs *envs);
+void open_heredoc(char *here_doc, char *delim);
 
 
 // linked list

@@ -85,6 +85,18 @@ int exist_pipe(t_list *tab)
     return (-1);
 }
 
+int n_herdoc(t_list *cmds)
+{
+    t_list *tmp = cmds;
+    int i = 0;
+    while (tmp)
+    {
+        i++;
+      tmp = tmp->next;
+    }
+    return (i);
+}
+
 int exist_here_doc(t_list *tab)
 {
     t_list *tmp = tab;
@@ -102,14 +114,31 @@ int exist_here_doc(t_list *tab)
 void check_first(t_list *tab, t_envs *envs)
 {
 
-    if (tab->token == WORD)
+    if (tab->token == WORD  || tab->token == HERE_DOC || tab->token == PIPE_LINE)
     {
         if (exist_pipe(tab) == -1)
         {
             if (is_builtin(tab->input) == 0)
                 exec_builtin(tab, &envs);
             else
+            {
+                if (exist_here_doc(tab) == 0)
+                {
+                    t_list *tmp = tab;
+                    while (tab)
+                    {
+                       if (tab->token == HERE_DOC && tab->next)
+                       {
+                        open_heredoc(tab->input,tab->next->input);
+                       }
+                    }
+                    
+                  
+                    
+                }
                 exec_non_buitin(tab, &envs);
+
+            }
         }
         else
             exec_with_pipeline(tab, &envs);
@@ -120,8 +149,10 @@ void check_first(t_list *tab, t_envs *envs)
         if (str)
             printf("%s\n", str);
     }
-    // else if (tab->token == HERE_DOC)
+    // else if (tab && tab->token == HERE_DOC)
     // {
     //     handle_here_doc(tab,envs);
+     
+        
     // }
 }

@@ -2,46 +2,46 @@
 
 void open_heredoc(char *here_doc, char *delim)
 {
-    int pipefd[2];
-    pid_t pid, rdr;
-
-    printf("were in\n");
-
-    if (pipe(pipefd) == -1)
-    {
-        perror("pipe");
-    }
+    int fd;
+    pid_t pid;
 
     pid = fork();
-    if (!pid)
-    {                       /* COMMAND RUNNER PROCESS */
-        dup2(pipefd[0], 0); /* set stdin to pipe's read end */
-        close(pipefd[1]);   /* close pipe's write end */
-                            /* exec command (will read from stdin) */
-                            execvp("ls",NULL);
-    }
-    rdr = fork();
-    if (!rdr)
-    {                     /* INPUT READER PROCESS */
-        close(pipefd[0]); /* close pipe's read end */
 
-        /* read input from stdin until a line containing only
-           the end of input marker is found */
-        char buf[1024];
-        while (fgets(buf, sizeof(buf), stdin))
-        {
-            /* break when end of input marker is read */
-            if (!strcmp(buf, delim))
-                break;
-            /* write data to pipe */
-            write(pipefd[1], buf, strlen(buf));
-        }
-        return ;
+    if (pid == -1)
+    {
+        perror("fork");
+        exit(EXIT_FAILURE);
     }
-    close(pipefd[0]); /* close pipe's read end */
-    close(pipefd[1]);
+
+    if (pid == 0)
+    {
+        fd = open("/tmp/.herdoc", O_CREAT | O_TRUNC | O_RDWR, 0666);
+     
+       
+        char *str;
+        str = ft_strdup(" ");
+        while (1)
+        {
+            str = readline(">");
+
+            if (ft_strncmp(str, delim, ft_strlen(delim)) == 0)
+                break;
+
+            if (!str)
+                continue;
+            ft_putendl_fd(str, fd);
+        }
+        if (str)
+            free(str);
+        close(fd);
+        // unlink("/tmp/.herdoc");
+    }
+    else
+    {
+        wait(NULL);
+    }
 }
-void set_heredoc(t_heredoc *heredoc, t_list *cmds)
+void set_heredoc(t_heredoc **heredoc, t_list *cmds)
 {
 
     t_list *tmp = cmds;
@@ -49,26 +49,25 @@ void set_heredoc(t_heredoc *heredoc, t_list *cmds)
     while (tmp)
     {
         if (tmp->token == HERE_DOC && tmp->next != NULL)
-            creat_node3(&heredoc, tmp->input, tmp->next->input);
+            creat_node3(&*heredoc, tmp->input, tmp->next->input);
         tmp = tmp->next;
     }
-
-    // while (heredoc)
-    // {
-    //     printf("%s -> %s\n", heredoc->here_doc, heredoc->delimiter);
-    //     heredoc = heredoc->next;
-    // }
 }
 void handle_here_doc(t_list *tab, t_envs *envs)
 {
 
     t_heredoc *heredoc = NULL;
 
-    set_heredoc(heredoc, tab);
-    while (heredoc)
+    set_heredoc(&heredoc, tab);
+    if (heredoc != NULL)
     {
-        printf("%s->%s\n",heredoc->here_doc,heredoc->delimiter);
-        // open_heredoc(heredoc->here_doc, heredoc->delimiter);
-        heredoc = heredoc->next;
+        while (heredoc)
+        {
+            printf("%s->%s\n", heredoc->here_doc, heredoc->delimiter);
+            open_heredoc(heredoc->here_doc, heredoc->delimiter);
+            heredoc = heredoc->next;
+        }
     }
+    else
+        perror("heredoc");
 }

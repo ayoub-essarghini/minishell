@@ -10,9 +10,23 @@ void echo_cmd(t_list *cmds, t_envs *envs)
         {
             while (tmp->next != NULL) // Check tmp->next before accessing tmp->next->input
             {
-                printf("%s", tmp->next->input);
-                if (tmp->next->next != NULL)
-                    printf(" ");
+                if (tmp->next->token == ENV)
+                {
+                    // if (envs != NULL)
+                    // printf("%s\n", envs->key);
+                    // printf("%s\n", tmp->input);
+                    char *value = get_myenv(tmp->next->input + 1, &envs);
+                    if (value)
+                        printf("%s", value);
+                }
+                else
+                {
+
+                    printf("%s", tmp->next->input);
+                    if (tmp->next->next != NULL)
+                        printf(" ");
+                }
+
                 tmp = tmp->next;
             }
         }
@@ -23,13 +37,11 @@ void echo_cmd(t_list *cmds, t_envs *envs)
                 if (tmp->token == ENV)
                 {
                     // if (envs != NULL)
-                    printf("%s\n", envs->key);
-                    printf("%s\n", tmp->input);
+                    // printf("%s\n", envs->key);
+                    // printf("%s\n", tmp->input);
                     char *value = get_myenv(tmp->input + 1, &envs);
                     if (value)
                         printf("%s\n", value);
-                    else
-                        printf("error");
                 }
                 else
                 {
@@ -73,6 +85,7 @@ void exec_non_buitin(t_list *tab, t_envs **envs)
     if (pid == 0)
     {
 
+       
         if (args[0][0] != '.')
         {
             while (paths[i])
@@ -96,6 +109,7 @@ void exec_non_buitin(t_list *tab, t_envs **envs)
         else
         {
             // printf("is it a programme\n");
+
             if (execve(args[0], args, NULL) == -1)
             {
                 perror(args[0]);
@@ -140,11 +154,11 @@ void exec_builtin(t_list *cmds, t_envs **envs)
         echo_cmd(cmds, *envs);
     else if (ft_strcmp(cmds->input, "cd") == 0)
         change_directory(cmds, &*envs);
-    else if (ft_strcmp(cmds->input, "pwd") == 0)
+    else if (cmds && ft_strcmp(cmds->input, "pwd") == 0)
     {
         printf("pwd\n");
-        // char *pwd = get_myenv("PWD", &*envs);
-        // if (pwd != NULL)
-        //     printf("%s\n", pwd);
+        char *pwd = get_myenv("PWD", &*envs);
+        if (pwd != NULL)
+            printf("%s\n", pwd);
     }
 }
