@@ -104,18 +104,12 @@ void check_first(t_list *tab, t_envs *envs)
 
     if (tab->token == WORD)
     {
-        // if (exist_pipe(tab) == -1)
-        // {
-        //     if (is_builtin(tab->input) == 0)
-        //         exec_builtin(tab, &envs);
-        //     else
-        //         exec_non_buitin(tab, &envs);
-        // }
-        // else 
-        if (exist_here_doc(tab) == 0)
+        if (exist_pipe(tab) == -1)
         {
-            printf("is it here doc here");
-              handle_here_doc(tab,envs);
+            if (is_builtin(tab->input) == 0)
+                exec_builtin(tab, &envs);
+            else
+                exec_non_buitin(tab, &envs);
         }
         else
             exec_with_pipeline(tab, &envs);
@@ -126,8 +120,8 @@ void check_first(t_list *tab, t_envs *envs)
         if (str)
             printf("%s\n", str);
     }
-    else if (tab->token == HERE_DOC)
-    {
-        handle_here_doc(tab,envs);
-    }
+    // else if (tab->token == HERE_DOC)
+    // {
+    //     handle_here_doc(tab,envs);
+    // }
 }

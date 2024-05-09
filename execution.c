@@ -1,6 +1,6 @@
 #include "parsing.h"
 
-void echo_cmd(t_list *cmds,t_envs *envs)
+void echo_cmd(t_list *cmds, t_envs *envs)
 {
 
     t_list *tmp = cmds->next;
@@ -23,11 +23,11 @@ void echo_cmd(t_list *cmds,t_envs *envs)
                 if (tmp->token == ENV)
                 {
                     // if (envs != NULL)
-                        printf("%s\n",envs->key);
-                    printf("%s\n",tmp->input);
-                    char *value = get_myenv(tmp->input+1,&envs);
+                    printf("%s\n", envs->key);
+                    printf("%s\n", tmp->input);
+                    char *value = get_myenv(tmp->input + 1, &envs);
                     if (value)
-                        printf("%s\n",value);
+                        printf("%s\n", value);
                     else
                         printf("error");
                 }
@@ -72,23 +72,35 @@ void exec_non_buitin(t_list *tab, t_envs **envs)
     pid_t pid = fork();
     if (pid == 0)
     {
-        while (paths[i])
+
+        if (args[0][0] != '.')
         {
-            char *new_cmd = ft_strjoin(paths[i], "/");
-            new_cmd = ft_strjoin(new_cmd, args[0]);
-            // printf("%s\n",new_cmd);
-            if (execve(new_cmd, args, NULL) == -1)
+            while (paths[i])
             {
-                i++;
-            }
-            else
-            {
+                char *new_cmd = ft_strjoin(paths[i], "/");
+                new_cmd = ft_strjoin(new_cmd, args[0]);
+                // printf("%s\n",new_cmd);
+                if (execve(new_cmd, args, NULL) == -1)
+                {
+                    i++;
+                }
+                else
+                {
+                    free(new_cmd);
+                    return;
+                }
                 free(new_cmd);
-                return;
             }
-            free(new_cmd);
+            perror(args[0]);
         }
-        perror(args[0]);
+        else
+        {
+            // printf("is it a programme\n");
+            if (execve(args[0], args, NULL) == -1)
+            {
+                perror(args[0]);
+            }
+        }
     }
     else
         wait(NULL);
@@ -125,13 +137,14 @@ void exec_builtin(t_list *cmds, t_envs **envs)
             printf("unset : not enough arguments\n");
     }
     else if (ft_strcmp(cmds->input, "echo") == 0 || ft_strcmp(cmds->next->input, "|") == 0)
-        echo_cmd(cmds,*envs);
+        echo_cmd(cmds, *envs);
     else if (ft_strcmp(cmds->input, "cd") == 0)
         change_directory(cmds, &*envs);
-    else if (cmds && ft_strcmp(cmds->input, "pwd") == 0)
+    else if (ft_strcmp(cmds->input, "pwd") == 0)
     {
-        char *pwd = get_myenv("PWD", &*envs);
-        if (pwd != NULL)
-            printf("%s\n", pwd);
+        printf("pwd\n");
+        // char *pwd = get_myenv("PWD", &*envs);
+        // if (pwd != NULL)
+        //     printf("%s\n", pwd);
     }
 }
