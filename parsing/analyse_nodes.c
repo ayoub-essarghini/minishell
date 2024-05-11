@@ -92,7 +92,7 @@ int n_herdoc(t_list *cmds)
     while (tmp)
     {
         i++;
-      tmp = tmp->next;
+        tmp = tmp->next;
     }
     return (i);
 }
@@ -114,7 +114,7 @@ int exist_here_doc(t_list *tab)
 void check_first(t_list *tab, t_envs *envs)
 {
 
-    if (tab->token == WORD  || tab->token == HERE_DOC || tab->token == PIPE_LINE)
+    if (tab->token == WORD || tab->token == HERE_DOC || tab->token == PIPE_LINE)
     {
         if (exist_pipe(tab) == -1)
         {
@@ -127,26 +127,18 @@ void check_first(t_list *tab, t_envs *envs)
                     t_list *tmp = tab;
                     while (tmp)
                     {
-                       if (tmp->token == HERE_DOC && tmp->next)
-                       {
-                        open_heredoc(tmp->input,tmp->next->input);
-                       }
-                       tmp = tmp->next;
+                        if (tmp->token == HERE_DOC && tmp->next)
+                        {
+                            open_heredoc(tmp->next->input);
+                        }
+                        tmp = tmp->next;
                     }
 
-                    char *args[] = {"/bin/ls", "-la", NULL};
-                    if (execve(args[0],args,NULL) == -1)
-                    {
-                            perror("ls");
-                    }
-                  
-                    
                 }
                 else
                 {
                     exec_non_buitin(tab, &envs);
                 }
-
             }
         }
         else
@@ -161,7 +153,6 @@ void check_first(t_list *tab, t_envs *envs)
     // else if (tab && tab->token == HERE_DOC)
     // {
     //     handle_here_doc(tab,envs);
-     
-        
+
     // }
 }
