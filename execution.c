@@ -2,7 +2,6 @@
 
 void echo_cmd(t_list *cmds, t_envs *envs)
 {
-
     t_list *tmp = cmds->next;
     if (tmp)
     {
@@ -10,23 +9,12 @@ void echo_cmd(t_list *cmds, t_envs *envs)
         {
             while (tmp->next != NULL) // Check tmp->next before accessing tmp->next->input
             {
-                if (tmp->next->token == ENV)
+                if (tmp->next->input[0] != '$')
                 {
-                    // if (envs != NULL)
-                    // printf("%s\n", envs->key);
-                    // printf("%s\n", tmp->input);
-                    char *value = get_myenv(tmp->next->input + 1, &envs);
-                    if (value)
-                        printf("%s", value);
-                }
-                else
-                {
-
                     printf("%s", tmp->next->input);
-                    if (tmp->next->next != NULL)
+                    if (tmp->next)
                         printf(" ");
                 }
-
                 tmp = tmp->next;
             }
         }
@@ -34,22 +22,9 @@ void echo_cmd(t_list *cmds, t_envs *envs)
         {
             while (tmp)
             {
-                if (tmp->token == ENV)
-                {
-                    // if (envs != NULL)
-                    // printf("%s\n", envs->key);
-                    // printf("%s\n", tmp->input);
-                    char *value = get_myenv(tmp->input + 1, &envs);
-                    if (value)
-                        printf("%s\n", value);
-                }
-                else
-                {
-                    printf("%s", tmp->input);
-                    if (tmp->next != NULL)
-                        printf(" ");
-                }
-
+                printf("%s", tmp->input);
+                if (tmp->next)
+                    printf(" ");
                 tmp = tmp->next;
             }
             printf("\n");
@@ -73,7 +48,8 @@ char **conv_to_array(t_list *tab)
     arr[i] = NULL;
     return arr;
 }
-void exec_non_buitin(t_list *tab, t_envs **envs)
+
+void exec_non_builtin(t_list *tab, t_envs **envs)
 {
     int i = 0;
     char *error;
@@ -124,25 +100,30 @@ void exec_non_buitin(t_list *tab, t_envs **envs)
         wait(NULL);
 }
 
+void ft_exit(t_list *cmds)
+{ 
+    if (cmds->next != NULL)
+    {
+        int status = ft_atoi(cmds->next->input);
+        if (status)
+            exit(status);
+        else
+            exit(0);
+    }
+    else
+        exit(0);
+}
+
 void exec_builtin(t_list *cmds, t_envs **envs)
 {
-
+    char *pwd;
     if (ft_strcmp(cmds->input, "env") == 0)
         get_export(NULL, NULL, &*envs);
     else if (ft_strcmp(cmds->input, "exit") == 0)
-    {
-        if (cmds->next != NULL)
-        {
-            int status = ft_atoi(cmds->next->input);
-            if (status)
-                exit(status);
-            else
-                exit(0);
-        }
-    }
+        ft_exit(cmds);
     else if (ft_strcmp(cmds->input, "export") == 0)
     {
-        if (cmds->next == NULL || ft_strcmp(cmds->next->input, "|") == 0)
+        if (cmds->next == NULL || (cmds->next && ft_strcmp(cmds->next->input, "|") == 0))
             get_export(NULL, NULL, &*envs);
         else
             set_export(cmds, &*envs);
@@ -154,15 +135,14 @@ void exec_builtin(t_list *cmds, t_envs **envs)
         else
             printf("unset : not enough arguments\n");
     }
-    else if (ft_strcmp(cmds->input, "echo") == 0 || ft_strcmp(cmds->next->input, "|") == 0)
+    else if (ft_strcmp(cmds->input, "echo") == 0 || (cmds->next && ft_strcmp(cmds->next->input, "|") == 0))
         echo_cmd(cmds, *envs);
     else if (ft_strcmp(cmds->input, "cd") == 0)
         change_directory(cmds, &*envs);
     else if (cmds && ft_strcmp(cmds->input, "pwd") == 0)
     {
-        printf("pwd\n");
-        char *pwd = get_myenv("PWD", &*envs);
-        if (pwd != NULL)
+        pwd = get_myenv("PWD", &*envs);
+        if (pwd)
             printf("%s\n", pwd);
     }
 }

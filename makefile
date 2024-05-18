@@ -1,12 +1,16 @@
 NAME = minishell
  
 SRCS =  minishell.c \
-		./parsing/check_line.c \
-		./parsing/get_line.c  pipe_exec.c \
+		./parsing/ft_parse_line.c \
+		./parsing/ft_split_line.c  pipe_exec.c \
 		./parsing/linked_list.c \
+		./parsing/check_concate.c \
+		./parsing/check_commands.c \
 		./parsing/utils.c export.c \
-		./parsing/analyse_nodes.c here_doc_list.c here_doc.c\
+		here_doc_list.c redirections.c\
 		execution.c envs_list.c change_dir.c \
+		./parsing/parse_tree.c \
+
 
 FLAGS = -Wall -Wextra -Werror 
 
@@ -23,7 +27,7 @@ INCLUDE = parsing.h ./parsing/libft/libft.h
 
 $(NAME) : $(OBJS) $(INCLUDE)  
 	@make -C ./parsing/libft
-	@$(GCC) $(OBJS) $(LIBFT) -lreadline -o $(NAME) #-fsanitize=address -g
+	@$(GCC) $(OBJS) $(LIBFT) -lreadline -o $(NAME) -g3 -fsanitize=address 
 	@echo "done"
 
 

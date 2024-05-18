@@ -1,6 +1,5 @@
 #include "parsing.h"
 
-
 t_envs *ft_lstlast2(t_envs *lst)
 {
     if (!lst)

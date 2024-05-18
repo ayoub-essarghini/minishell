@@ -1,7 +1,6 @@
 #include "parsing.h"
 
-
-t_heredoc *ft_lstlast3(t_heredoc *lst)
+t_red *ft_lstlast3(t_red *lst)
 {
     if (!lst)
         return (NULL);
@@ -12,9 +11,9 @@ t_heredoc *ft_lstlast3(t_heredoc *lst)
     return (lst);
 }
 
-int ft_lstsize3(t_heredoc *lst)
+int ft_lstsize3(t_red *lst)
 {
-    t_heredoc *temp;
+    t_red *temp;
     int i;
 
     temp = lst;
@@ -27,9 +26,9 @@ int ft_lstsize3(t_heredoc *lst)
     return (i);
 }
 
-void ft_lstadd_back3(t_heredoc **lst, t_heredoc *new)
+void ft_lstadd_back3(t_red **lst, t_red *new)
 {
-    t_heredoc *add;
+    t_red *add;
 
     if (new)
     {
@@ -45,33 +44,37 @@ void ft_lstadd_back3(t_heredoc **lst, t_heredoc *new)
     }
 }
 
-t_heredoc *ft_lstnew3(char *input, char *delimiter)
+t_red *ft_lstnew3(char *input, t_token token, char *file)
 {
-    t_heredoc *newnode;
+    t_red *newnode;
 
-    newnode = malloc(sizeof(t_heredoc));
+    newnode = malloc(sizeof(t_red));
     if (!newnode)
         return (NULL);
-    newnode->here_doc = strdup(input);
-    newnode->delimiter= strdup(delimiter);
+    newnode->input = ft_strdup(input);
+    newnode->file = ft_strdup(file);
+    newnode->token = token;
     newnode->next = NULL;
     return (newnode);
 }
 
-void creat_node3(t_heredoc **head, char *input, char *delimiter)
+void creat_redirection(t_red **h, char *input, t_token token, char *file)
 {
-    t_heredoc *new;
+    t_red *new;
 
-    if (*head == NULL)
+    if (*h == NULL)
     {
-        *head = ft_lstnew3(input,delimiter);
+        printf("[1] %s\n --------------", file);
+        *h = ft_lstnew3(input, token, file);
     }
     else
     {
-        new = malloc(sizeof(t_heredoc));
-        new->here_doc = ft_strdup(input);
-        new->delimiter= ft_strdup(delimiter);
+        new = malloc(sizeof(t_red));
+        new->input = ft_strdup(input);
+         printf("[2] %s\n --------------", file);
+        new->file = ft_strdup(file);
+        new->token = token;
         new->next = NULL;
-        ft_lstadd_back3(head, new);
+        ft_lstadd_back3(h, new);
     }
 }

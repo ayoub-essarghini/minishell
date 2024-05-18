@@ -12,6 +12,7 @@ char *get_myenv(char *key, t_envs **envs)
         }
         tmp = tmp->next;
     }
+
     return (value);
 }
 
@@ -114,13 +115,9 @@ int main(int argc, char *argv[], char *envs[])
         cmd = readline(name);
         if (ft_strlen(cmd) > 0 && !check_line(cmd))
         {
-            // check if syntax is correct otherwise print syntax error 
             ft_parse_line(cmd, &tab, &last, &env_list); // split line and parse the line;
-            // printf("<><><<><><><><>\n");
             // print_nodes(last);
-            //excution
-            check_node(last,env_list);
-            //print_nodes(last);
+            check_node(last, env_list);
             add_history(cmd);
             ft_free(last);
             last = NULL;

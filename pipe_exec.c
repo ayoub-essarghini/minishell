@@ -6,26 +6,48 @@ char *conv_to_cmds(t_list *tab)
     int total_length = 0;
     t_list *temp = tab;
 
+    // First pass: calculate the total length needed for the resulting string
     while (temp)
     {
-        total_length += strlen(temp->input) + 1;
+        // Check if the current token is not a redirection token and if the previous token is not a redirection token
+        if (temp->token != REDIR_IN && temp->token != REDIR_APPEND && temp->token != REDIR_OUT && temp->token != HERE_DOC &&
+            (!temp->prev || (temp->prev->token != REDIR_IN && temp->prev->token != REDIR_APPEND && temp->prev->token != REDIR_OUT && temp->prev->token != HERE_DOC)))
+        {
+            total_length += strlen(temp->input) + 1; // +1 for the space or null terminator
+        }
         temp = temp->next;
     }
+
+    // Allocate memory for the resulting string
     str = (char *)malloc(total_length + 1);
     if (!str)
         return NULL;
 
-    str[0] = '\0';
+    str[0] = '\0'; // Initialize the string with null terminator
     temp = tab;
+
+    // Second pass: concatenate the valid command parts into the resulting string
     while (temp)
     {
-        strcat(str, temp->input);
-        strcat(str, " ");
+        // Check if the current token is not a redirection token and if the previous token is not a redirection token
+        if (temp->token != REDIR_IN && temp->token != REDIR_APPEND && temp->token != REDIR_OUT && temp->token != HERE_DOC &&
+            (!temp->prev || (temp->prev->token != REDIR_IN && temp->prev->token != REDIR_APPEND && temp->prev->token != REDIR_OUT && temp->prev->token != HERE_DOC)))
+        {
+            strcat(str, temp->input);
+            strcat(str, " ");
+        }
         temp = temp->next;
+    }
+
+    // Remove the trailing space
+    if (total_length > 0)
+    {
+        str[total_length - 1] = '\0';
     }
 
     return str;
 }
+
 
 int check_pipes(int (*pipefds)[2], int n)
 {
@@ -50,9 +72,13 @@ int exec_with_pipeline(t_list *tab, t_envs **envs)
     int i = 0;
 
     while (arr[i])
+    {
+        // printf("[%s]\n",arr[i]);
         i++;
+    }
 
-    int(*pipefds)[2] = malloc(sizeof(int *) * (i - 1));
+    int(*pipefds)[2] = malloc(sizeof(int[2]) * (i - 1));
+
     if (!pipefds)
         printf("error ocurred");
 
@@ -64,7 +90,7 @@ int exec_with_pipeline(t_list *tab, t_envs **envs)
     int k = 0;
     while (k < i)
     {
-      
+
         if ((pid = fork()) == -1)
         {
             perror("fork");
@@ -115,7 +141,7 @@ int exec_with_pipeline(t_list *tab, t_envs **envs)
             char **paths = ft_split(get_path, ':');
             if (is_builtin(args[0]) == 0)
             {
-                exec_builtin(tab,&*envs);
+                exec_builtin(tab, &*envs);
                 // perror(args[0]);
                 exit(EXIT_SUCCESS);
                 // rl_redisplay();
@@ -123,7 +149,7 @@ int exec_with_pipeline(t_list *tab, t_envs **envs)
             else
             {
 
-                int ii;
+                int ii = 0;
                 while (paths && paths[ii])
                 {
                     // printf("----->%p\n",envs);
