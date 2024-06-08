@@ -1,131 +1,69 @@
-#include "parsing.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aes-sarg <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/04 18:20:15 by aes-sarg          #+#    #+#             */
+/*   Updated: 2024/06/08 19:31:58 by aes-sarg         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-char *get_myenv(char *key, t_envs **envs)
+#include "./include/minishell.h"
+
+int		g_exit_status;
+
+void	setup_signals(void)
 {
-    t_envs *tmp = *envs;
-    char *value = NULL;
-    while (tmp)
-    {
-        if (ft_strcmp(tmp->key, key) == 0)
-        {
-            value = ft_strdup(tmp->value);
-        }
-        tmp = tmp->next;
-    }
-    return (value);
+	signal(SIGINT, &handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
 }
 
-void print_ascii()
+void	ft_exit_free(t_cmd *tabcmd, t_envs *envs)
 {
-    printf("\033[32m"); // Set color to green
-    printf("#############################################################################################################\n");
-    printf("#███╗   ███╗ █████╗ ██████╗ ███╗   ██╗███████╗███████╗███████╗      ███████╗██╗  ██╗███████╗██╗     ██╗     #\n");
-    printf("#████╗ ████║██╔══██╗██╔══██╗████╗  ██║██╔════╝██╔════╝██╔════╝      ██╔════╝██║  ██║██╔════╝██║     ██║     #\n");
-    printf("#██╔████╔██║███████║██║  ██║██╔██╗ ██║█████╗  ███████╗███████╗█████╗███████╗███████║█████╗  ██║     ██║     #\n");
-    printf("#██║╚██╔╝██║██╔══██║██║  ██║██║╚██╗██║██╔══╝  ╚════██║╚════██║╚════╝╚════██║██╔══██║██╔══╝  ██║     ██║     #\n");
-    printf("#██║ ╚═╝ ██║██║  ██║██████╔╝██║ ╚████║███████╗███████║███████║      ███████║██║  ██║███████╗███████╗███████╗#\n");
-    printf("#╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═══╝╚══════╝╚══════╝╚══════╝      ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝#\n");
-    printf("#############################################################################################################\n");
-    printf("\033[0m");
+	ft_free_tab_command(tabcmd);
+	tabcmd = NULL;
+	ft_free_env(envs);
+	envs = NULL;
+	rl_clear_history();
 }
 
-void set_and_colorize_prompt(char cwd[1045], char **name, char *root, t_envs **envs)
+void	lunch(t_envs **envlist)
 {
+	t_cmd	*tabcmd;
+	char	*cmd;
 
-    *name = strrchr(cwd, '/');
-
-    root = get_myenv("HOME", &*envs);
-    // printf("%s hhh\n",root);
-    root = strrchr(root, '/');
-
-    if (strcmp(*name + 1, root + 1) == 0)
-    {
-
-        *name = ft_strjoin("", "\033[33m ➜\033[0m ");
-    }
-    else
-    {
-        *name = ft_strjoin(" \033[33m", *name + 1);
-        *name = ft_strjoin(*name, "\33[0m\033[33m ➜\033[0m ");
-    }
+	cmd = NULL;
+	tabcmd = NULL;
+	while (1)
+	{
+		setup_signals();
+		cmd = readline("minishell  ➜ ");
+		if (!cmd)
+		{
+			ft_exit_free(tabcmd, *envlist);
+			printf("exit\n");
+			exit(0);
+		}
+		if (check_line(cmd))
+		{
+			if (ft_parse_line(cmd, &tabcmd, envlist) == 1)
+				exec_cmd(&tabcmd, envlist);
+			ft_free_tab_command(tabcmd);
+			tabcmd = NULL;
+		}
+		cmd = NULL;
+	}
 }
 
-
-
-void set_envs(char *envs[], t_envs **envs_lst)
+int	main(int argc, char *argv[], char *envs[])
 {
-    int i;
-    char *key;
-    char *value;
+	t_envs	*envlist;
 
-    i = 0;
-    while (envs[i] != NULL)
-    {
-        key = get_key(envs[i]);
-        value = get_value(envs[i]);
-        creat_node(envs_lst, key, value);
-        i++;
-    }
-}
-
-char *get_mycwd(t_envs *env_list)
-{
-    t_envs *tmp = env_list;
-    char *pwd;
-
-    while (tmp)
-    {
-        if (ft_strcmp(tmp->key, "PWD") == 0)
-            pwd = ft_strdup(tmp->value);
-        tmp = tmp->next;
-    }
-    return (pwd);
-}
-
-int main(int argc, char *argv[], char *envs[])
-{
-    (void)argc;
-    (void)argv;
-    (void)envs;
-    char cwd[1045];
-    char *name = NULL;
-    t_list *tab;
-    t_list *last;
-    t_envs *env_list = NULL;
-    char *root = NULL;
-    char *cmd = NULL;
-
-    print_ascii();
-    // int i = 0;
-    if (envs[0] == NULL)
-        set_defautl_env(&env_list);
-    else
-        set_envs(envs, &env_list);
-    tab = NULL;
-    last = NULL;
-    while (1)
-    {
-        if (getcwd(cwd, sizeof(cwd)) == NULL)
-        {
-            perror("getcwd");
-            exit(EXIT_FAILURE);
-        }
-        set_and_colorize_prompt(cwd, &name, root, &env_list);
-        cmd = readline(name);
-        if (ft_strlen(cmd) > 0 && !check_line(cmd))
-        {
-            // check if syntax is correct otherwise print syntax error 
-            ft_parse_line(cmd, &tab, &last, &env_list); // split line and parse the line;
-            // printf("<><><<><><><><>\n");
-            // print_nodes(last);
-            //excution
-            check_node(last,env_list);
-            //print_nodes(last);
-            add_history(cmd);
-            ft_free(last);
-            last = NULL;
-            tab = NULL;
-        }
-        free(cmd);
-    }
+	envlist = NULL;
+	g_exit_status = 0;
+	set_envs_list(argc, argv, envs, &envlist);
+	lunch(&envlist);
 }

@@ -1,60 +1,113 @@
-#include "../parsing.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_parse_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aes-sarg <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/04 18:14:26 by aes-sarg          #+#    #+#             */
+/*   Updated: 2024/06/04 18:14:29 by aes-sarg         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void ft_token(t_list *tab)
+#include "../include/minishell.h"
+
+t_list	*creat_last_list(t_list **last)
 {
-    while (tab)
-    {
-        if (ft_strlen(tab->input) > 1 && tab->input[0] == '$')
-            tab->token = ENV;
-        else if (ft_strcmp(tab->input, "|") == 0 && tab->status == 0)
-            tab->token = PIPE_LINE;
-        else if (ft_strcmp(tab->input, "<") == 0 && tab->status == 0)
-            tab->token = REDIR_IN;
-        else if (ft_strcmp(tab->input, ">") == 0 && tab->status == 0)
-            tab->token = REDIR_OUT;
-        else if (ft_strcmp(tab->input, ">>") == 0 && tab->status == 0)
-            tab->token = REDIR_APPEND;
-        else if (ft_strcmp(tab->input, "<<") == 0 && tab->status == 0)
-            tab->token = HERE_DOC;
-        else if (!all_space(tab->input) && tab->status == 0)
-            tab->token = WHITE_SPACE;
-        else if (!all_space(tab->input) && tab->status != 0)
-            tab->token = QUOTES_SPACES;
-        else
-            tab->token = WORD;
-        tab = tab->next;
-    }
+	t_list	*new_last;
+	t_list	*current;
+
+	current = *last;
+	new_last = NULL;
+	while (current)
+	{
+		if (current->token == NOT_DEF)
+			current = current->next;
+		else
+		{
+			creat_last(&new_last, current->input, current->token,
+				current->status);
+			current = current->next;
+		}
+	}
+	return (new_last);
 }
 
-void check_env(t_list *tab, t_envs **envs)
+int	ft_lexer(char *line, t_list **tab, t_list **last, t_envs **envs)
 {
-    while (tab)
-    {
-        if (tab->token == ENV && tab->status != 1)
-        {
-            char *str = get_myenv(tab->input + 1, envs);
-            if (str)
-            {
-                free(tab->input);
-                tab->input = ft_strdup(str);
-            }
-            else
-            {
-                free(tab->input);
-                tab->input = ft_strdup("");
-                tab->token = NOT_DEF;
-            }
-        }
-        tab = tab->next;
-    }
+	t_list	*temp;
+
+	if (check_quotes(line))
+	{
+		ft_split_line(tab, line);
+		ft_token(*tab);
+		ft_history(*tab, line);
+		temp = *tab;
+		*tab = check_env(*tab, envs);
+		ft_free(temp);
+		ft_check_concate(tab, last);
+		ft_free(*tab);
+		*tab = NULL;
+		return (1);
+	}
+	else
+	{
+		add_history(line);
+		free(line);
+		ft_putendl_fd("madness shell: syntax error near quotes ", 2);
+		g_exit_status = 2;
+	}
+	return (0);
 }
 
-void ft_parse_line(char *line, t_list **tab, t_list **last, t_envs **envs)
+int	ft_command_tab(t_list **last, t_cmd **tabcmd, t_envs **envs)
 {
-    ft_split_line(tab, line); // get the words from the line with the status
-    ft_token(*tab);           // tokenization
-    check_env(*tab, envs);    // // get the env if found otherwise we free the node
-    ft_check_concate(tab, last);
-    // print_nodes(*last);
-    // check_parsing(last, root);
+	t_list	*new_last;
+
+	new_last = NULL;
+	new_last = creat_last_list(last);
+	if (new_last)
+	{
+		parse_command_tab(&new_last, tabcmd, envs);
+		ft_free(new_last);
+		new_last = NULL;
+		return (1);
+	}
+	return (0);
+}
+
+int	creat_the_tab_command(t_cmd **tabcmd, t_envs **envs, t_list **last)
+{
+	int	check;
+
+	check = check_syntax(*last, envs);
+	if (check == 1)
+	{
+		if (ft_command_tab(last, tabcmd, envs))
+		{
+			ft_free(*last);
+			*last = NULL;
+			return (1);
+		}
+	}
+	else if (!check)
+		g_exit_status = 2;
+	return (0);
+}
+
+int	ft_parse_line(char *line, t_cmd **tabcmd, t_envs **envs)
+{
+	t_list	*tab;
+	t_list	*last;
+
+	last = NULL;
+	tab = NULL;
+	if (ft_lexer(line, &tab, &last, envs))
+	{
+		if (creat_the_tab_command(tabcmd, envs, &last) == 1)
+			return (1);
+		ft_free(last);
+		last = NULL;
+	}
+	return (0);
 }
